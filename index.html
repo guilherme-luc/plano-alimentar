@@ -1,11 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriPlan — 2200 kcal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,6 +25,7 @@
       --light:    #F0F7F2;
       --white:    #FFFFFF;
       --shadow:   0 8px 32px rgba(27,43,31,.12);
+      --shadow-lg:0 16px 48px rgba(27,43,31,.18);
       --r:        16px;
     }
 
@@ -43,11 +46,11 @@
       opacity: .5;
     }
 
-    /* ─── HERO HEADER ─── */
+    /* ─── HERO ─── */
     .hero {
       position: relative;
       background: var(--dark);
-      padding: 56px 24px 80px;
+      padding: 56px 24px 96px;
       text-align: center;
       overflow: hidden;
     }
@@ -116,11 +119,10 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      transition: all .25s;
     }
-    .macro-pill .dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-    }
+    .macro-pill:hover { background: rgba(255,255,255,.14); transform: translateY(-2px); }
+    .macro-pill .dot { width: 10px; height: 10px; border-radius: 50%; }
     .dot-p { background: var(--blue); }
     .dot-c { background: var(--amber); }
     .dot-g { background: var(--red); }
@@ -139,7 +141,69 @@
     .ps-c { background: var(--amber); flex: 50; }
     .ps-g { background: var(--red); flex: 20; }
 
-    /* ─── MAIN CONTENT ─── */
+    /* ─── DAILY PROGRESS TRACKER ─── */
+    .tracker-bar {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .tracker-kcal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tracker-ring {
+      position: relative;
+      width: 72px; height: 72px;
+    }
+    .tracker-ring svg {
+      transform: rotate(-90deg);
+    }
+    .tracker-ring .ring-bg { fill: none; stroke: var(--light); stroke-width: 7; }
+    .tracker-ring .ring-fill {
+      fill: none;
+      stroke: var(--green-l);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 188;
+      stroke-dashoffset: 188;
+      transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
+    }
+    .tracker-ring .ring-text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: var(--dark);
+      transform: rotate(0);
+    }
+    .tracker-ring .ring-text small { font-size: 9px; font-weight: 600; color: var(--mid); letter-spacing: .06em; }
+    .tracker-stats {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .tracker-stat {
+      background: var(--light);
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .tracker-stat .t-val { font-size: 18px; font-weight: 800; color: var(--dark); }
+    .tracker-stat .t-lbl { font-size: 10px; color: var(--mid); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+    .tracker-stat .t-bar { height: 3px; border-radius: 2px; background: var(--light); margin-top: 6px; overflow: hidden; }
+    .tracker-stat .t-bar-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+    .t-bar-p .t-bar-fill { background: var(--blue); }
+    .t-bar-c .t-bar-fill { background: var(--amber); }
+    .t-bar-g .t-bar-fill { background: var(--red); }
+
+    /* ─── MAIN NAV TABS ─── */
     .container {
       max-width: 900px;
       margin: 0 auto;
@@ -148,20 +212,61 @@
       z-index: 1;
     }
 
-    /* ─── DAY SELECTOR TABS ─── */
-    .tabs {
+    .nav-tabs {
+      display: flex;
+      background: var(--white);
+      border-radius: 16px;
+      padding: 6px;
+      box-shadow: var(--shadow);
+      margin-bottom: 32px;
+      margin-top: 36px;
+      gap: 6px;
+    }
+    .nav-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--mid);
+      cursor: pointer;
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .nav-tab.active {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(45,106,79,.35);
+    }
+    .nav-tab:hover:not(.active) { background: var(--light); }
+    .nav-tab .tab-icon { font-size: 16px; }
+
+    /* ─── PAGE SECTIONS ─── */
+    .page-section { display: none; }
+    .page-section.active { display: block; animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ─── MEAL FILTER TABS ─── */
+    .filter-tabs {
       display: flex;
       gap: 8px;
       background: var(--white);
       border-radius: 14px;
       padding: 6px;
-      box-shadow: var(--shadow);
-      margin-bottom: 36px;
+      box-shadow: 0 4px 16px rgba(27,43,31,.08);
+      margin-bottom: 28px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab-btn {
+    .filter-tabs::-webkit-scrollbar { display: none; }
+    .filter-btn {
       flex: 1;
       min-width: fit-content;
       background: none;
@@ -179,7 +284,6 @@
       gap: 6px;
       white-space: nowrap;
     }
-    
     .time-badge {
       background: rgba(0,0,0,0.06);
       padding: 2px 8px;
@@ -189,17 +293,13 @@
       color: var(--mid);
       transition: all 0.2s;
     }
-
-    .tab-btn.active {
+    .filter-btn.active {
       background: var(--green);
       color: white;
       box-shadow: 0 4px 12px rgba(45,106,79,.35);
     }
-    .tab-btn.active .time-badge {
-      background: rgba(255,255,255,0.2);
-      color: white;
-    }
-    .tab-btn:hover:not(.active) { background: var(--light); }
+    .filter-btn.active .time-badge { background: rgba(255,255,255,0.2); color: white; }
+    .filter-btn:hover:not(.active) { background: var(--light); }
 
     /* ─── MEAL CARD ─── */
     .meal-card {
@@ -224,12 +324,13 @@
       flex-wrap: wrap;
     }
     .meal-icon {
-      width: 48px; height: 48px;
+      width: 52px; height: 52px;
       background: var(--green-xl);
-      border-radius: 14px;
+      border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(82,183,136,.2);
     }
     .meal-meta { flex: 1; }
     .meal-meta h2 {
@@ -244,9 +345,7 @@
       font-weight: 500;
       letter-spacing: .04em;
     }
-
     .meal-kcal {
-      font-family: 'DM Sans', sans-serif;
       font-size: 24px;
       color: var(--dark);
       font-weight: 700;
@@ -256,7 +355,6 @@
       display: flex;
       align-items: baseline;
       gap: 4px;
-      box-shadow: 0 4px 12px rgba(216, 243, 220, 0.5);
     }
     .meal-kcal small {
       font-size: 12px;
@@ -265,11 +363,21 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+    .meal-progress {
+      height: 3px;
+      background: var(--light);
+      overflow: hidden;
+    }
+    .meal-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-l), var(--green));
+      transition: width .5s ease;
+    }
 
     .macro-chips {
       display: flex;
       gap: 6px;
-      padding: 0 24px 18px;
+      padding: 14px 24px;
       flex-wrap: wrap;
     }
     .chip {
@@ -287,7 +395,7 @@
     .option-toggle {
       display: flex;
       gap: 8px;
-      padding: 0 24px 18px;
+      padding: 0 24px 16px;
     }
     .opt-btn {
       flex: 1;
@@ -309,77 +417,89 @@
     .opt-btn.active { border-color: var(--green); background: var(--green); color: white; }
     .opt-btn:hover:not(.active) { border-color: var(--green-l); color: var(--green); }
 
-    /* ─── FOOD LIST & INTERACTIVITY ─── */
+    /* ─── FOOD LIST ─── */
     .food-panel { display: none; padding: 0 24px 24px; }
     .food-panel.visible { display: block; }
 
     .food-item {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       padding: 12px 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       margin-bottom: 8px;
       background: var(--light);
       transition: all .2s ease;
       cursor: pointer;
+      border: 2px solid transparent;
       position: relative;
       overflow: hidden;
-      border: 2px solid transparent;
     }
-    .food-item:hover {
-      transform: translateX(4px);
-      background: #e6f0e9;
+    .food-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(82,183,136,.06));
+      opacity: 0;
+      transition: opacity .2s;
     }
-    
+    .food-item:hover { transform: translateX(4px); background: #e6f0e9; }
+    .food-item:hover::before { opacity: 1; }
+
     .food-checkbox {
-      width: 24px; height: 24px;
-      border: 2px solid var(--green-l);
+      width: 26px; height: 26px;
+      border: 2.5px solid var(--green-l);
       border-radius: 50%;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
+      background: white;
     }
-    
+    .food-checkbox svg {
+      width: 14px; height: 14px;
+      opacity: 0;
+      transform: scale(0);
+      transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    }
+
     .food-item.eaten {
       border-color: var(--green-xl);
-      background: transparent;
-      opacity: 0.65;
+      background: rgba(216,243,220,.3);
     }
     .food-item.eaten .food-checkbox {
       background: var(--green);
       border-color: var(--green);
+      transform: scale(1.1);
     }
-    .food-item.eaten .food-checkbox::after {
-      content: '✔';
-      color: white;
-      font-size: 14px;
-    }
-    .food-item.eaten .food-info { text-decoration: line-through; }
-    .food-item.eaten .food-img { filter: grayscale(100%); }
+    .food-item.eaten .food-checkbox svg { opacity: 1; transform: scale(1); }
+    .food-item.eaten .food-info strong { text-decoration: line-through; opacity: .6; }
+    .food-item.eaten .food-info span { opacity: .5; }
+    .food-item.eaten .food-img { filter: grayscale(60%); opacity: .75; }
+    .food-item.eaten .food-img-placeholder { filter: grayscale(60%); opacity: .75; }
 
     .food-img {
       width: 54px; height: 54px;
-      border-radius: 12px;
+      border-radius: 14px;
       object-fit: cover;
       flex-shrink: 0;
       background: #e2e8f0;
-      transition: filter 0.3s;
+      transition: all 0.3s;
     }
     .food-img-placeholder {
       width: 54px; height: 54px;
-      border-radius: 12px;
+      border-radius: 14px;
       background: var(--green-xl);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
+      font-size: 26px;
       flex-shrink: 0;
+      transition: all 0.3s;
     }
 
-    .food-info { flex: 1; transition: all 0.3s; }
-    .food-info strong { display: block; font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
-    .food-info span { font-size: 12px; color: var(--mid); }
+    .food-info { flex: 1; }
+    .food-info strong { display: block; font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 2px; transition: all .3s; }
+    .food-info span { font-size: 12px; color: var(--mid); transition: all .3s; }
 
     .food-kcal {
       font-size: 13px;
@@ -389,7 +509,7 @@
       background: var(--white);
       padding: 4px 10px;
       border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
     .supp-tag {
@@ -404,7 +524,7 @@
       vertical-align: middle;
     }
 
-    /* ─── DAILY SUMMARY CARD ─── */
+    /* ─── SUMMARY CARD ─── */
     .summary-card {
       background: var(--green);
       border-radius: 24px;
@@ -454,11 +574,299 @@
       margin-top: 4px;
     }
 
-    /* ─── OTHERS ─── */
+    /* ════════════════════════════════════
+       SHOPPING LIST PAGE
+    ════════════════════════════════════ */
+    .shop-header {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .shop-icon-big {
+      width: 64px; height: 64px;
+      background: var(--green-xl);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      flex-shrink: 0;
+    }
+    .shop-header-text { flex: 1; }
+    .shop-header-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+    .shop-header-text p { font-size: 13px; color: var(--mid); }
+    .shop-count-badge {
+      background: var(--green);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    /* Select All / Controls */
+    .shop-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .shop-ctrl-btn {
+      background: var(--white);
+      border: 2px solid var(--light);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--mid);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .shop-ctrl-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-xl); }
+    .shop-ctrl-btn.selected { border-color: var(--green); background: var(--green); color: white; }
+    .shop-search {
+      flex: 1;
+      min-width: 160px;
+      background: var(--white);
+      border: 2px solid var(--light);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--dark);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .shop-search:focus { border-color: var(--green-l); }
+    .shop-search::placeholder { color: var(--mid); }
+
+    /* Category */
+    .shop-category {
+      background: var(--white);
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(27,43,31,.07);
+      overflow: hidden;
+    }
+    .shop-cat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--light);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .shop-cat-header:hover { background: var(--light); }
+    .shop-cat-icon { font-size: 20px; }
+    .shop-cat-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--dark);
+      flex: 1;
+    }
+    .shop-cat-count {
+      background: var(--green-xl);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+    .shop-cat-chevron {
+      color: var(--mid);
+      font-size: 12px;
+      transition: transform .25s;
+    }
+    .shop-category.collapsed .shop-cat-chevron { transform: rotate(-90deg); }
+    .shop-category.collapsed .shop-cat-body { display: none; }
+
+    .shop-cat-body { padding: 12px 16px 16px; }
+
+    .shop-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all .2s;
+      border: 2px solid transparent;
+      background: var(--light);
+    }
+    .shop-item:last-child { margin-bottom: 0; }
+    .shop-item:hover { background: #e6f0e9; }
+
+    .shop-check {
+      width: 24px; height: 24px;
+      border: 2.5px solid var(--green-l);
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .25s cubic-bezier(.34,1.56,.64,1);
+      background: white;
+    }
+    .shop-check svg {
+      width: 13px; height: 13px;
+      opacity: 0; transform: scale(0);
+      transition: all .2s;
+    }
+    .shop-item.selected .shop-check {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .shop-item.selected .shop-check svg { opacity: 1; transform: scale(1); }
+    .shop-item.selected .shop-item-name { text-decoration: line-through; opacity: .55; }
+
+    .shop-item-emoji { font-size: 22px; flex-shrink: 0; }
+    .shop-item-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--dark); transition: all .3s; }
+    .shop-item-qty {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mid);
+      background: white;
+      padding: 3px 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      white-space: nowrap;
+    }
+    .shop-item.from-diet {
+      border-left: 3px solid var(--green-l);
+    }
+    .from-diet-tag {
+      font-size: 9px;
+      background: var(--green-xl);
+      color: var(--green);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    /* ─── GENERATE PANEL ─── */
+    .generate-panel {
+      position: sticky;
+      bottom: 20px;
+      z-index: 100;
+      margin-top: 24px;
+    }
+    .generate-card {
+      background: var(--dark);
+      border-radius: 24px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: 0 12px 40px rgba(27,43,31,.35);
+    }
+    .generate-info {
+      flex: 1;
+      color: white;
+    }
+    .generate-info strong { font-size: 16px; font-weight: 700; display: block; }
+    .generate-info span { font-size: 12px; opacity: .6; }
+    .generate-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .gen-btn {
+      padding: 12px 20px;
+      border-radius: 14px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gen-btn-pdf {
+      background: var(--green-l);
+      color: var(--dark);
+    }
+    .gen-btn-pdf:hover { background: #40a070; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(82,183,136,.4); }
+    .gen-btn-txt {
+      background: rgba(255,255,255,.12);
+      color: white;
+      border: 1.5px solid rgba(255,255,255,.2);
+    }
+    .gen-btn-txt:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 36px;
+      max-width: 480px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+      transform: translateY(20px) scale(.97);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .modal p { color: var(--mid); font-size: 14px; text-align: center; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-btn {
+      flex: 1; padding: 14px; border-radius: 14px; border: none;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .modal-btn-primary { background: var(--green); color: white; }
+    .modal-btn-primary:hover { background: var(--dark); transform: translateY(-2px); }
+    .modal-btn-outline { background: var(--light); color: var(--dark); }
+    .modal-btn-outline:hover { background: var(--green-xl); transform: translateY(-2px); }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: var(--light); border: none; border-radius: 50%;
+      width: 32px; height: 32px;
+      font-size: 16px; cursor: pointer; color: var(--mid);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .modal-close:hover { background: var(--green-xl); color: var(--green); }
+    .modal { position: relative; }
+
+    /* ─── MISC ─── */
     #progress-bar {
       position: fixed; top: 0; left: 0; height: 3px;
-      background: var(--green-l); z-index: 9999; transition: width .15s;
+      background: linear-gradient(90deg, var(--green-l), var(--amber));
+      z-index: 9999; transition: width .15s;
     }
+
     .actions { display: flex; gap: 12px; justify-content: center; margin: 40px 0 20px; flex-wrap: wrap; }
     .action-btn {
       padding: 14px 28px; border-radius: 40px; border: none;
@@ -466,7 +874,7 @@
       cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 8px;
     }
     .btn-primary { background: var(--green); color: white; box-shadow: 0 6px 20px rgba(45,106,79,.35); }
-    .btn-primary:hover { background: var(--dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(45,106,79,.4); }
+    .btn-primary:hover { background: var(--dark); transform: translateY(-2px); }
     .btn-outline { background: white; color: var(--green); border: 2px solid var(--green); }
     .btn-outline:hover { background: var(--green-xl); transform: translateY(-2px); }
 
@@ -474,30 +882,48 @@
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
       background: var(--dark); color: white; padding: 14px 24px; border-radius: 40px;
       font-size: 14px; font-weight: 500; z-index: 9999; transition: transform .35s, opacity .35s;
-      opacity: 0; pointer-events: none; white-space: nowrap;
+      opacity: 0; pointer-events: none; white-space: nowrap; max-width: 90vw;
+      display: flex; align-items: center; gap: 8px;
     }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    .empty-shop {
+      text-align: center; padding: 60px 20px; color: var(--mid);
+    }
+    .empty-shop .e-icon { font-size: 56px; margin-bottom: 16px; }
+    .empty-shop h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark); margin-bottom: 8px; }
+    .empty-shop p { font-size: 14px; }
 
     footer { text-align: center; padding: 32px 20px; color: var(--mid); font-size: 13px; border-top: 1px solid rgba(0,0,0,.06); }
     footer strong { color: var(--green); }
 
-    @media print {
-      body { background: white; }
-      #progress-bar, .actions, .tabs, .toast, .hero-badge { display: none; }
-      .food-panel { display: block !important; }
-      .meal-card { break-inside: avoid; box-shadow: none; border: 1px solid #e2e8f0; }
-    }
-
-    @media (max-width: 520px) {
-      .meal-top { padding: 18px 18px 14px; }
-      .food-panel, .macro-chips, .option-toggle { padding-left: 18px; padding-right: 18px; }
+    @media (max-width: 600px) {
+      .tracker-stats { grid-template-columns: repeat(3,1fr); }
+      .nav-tab span:not(.tab-icon) { display: none; }
+      .meal-top { padding: 16px; }
+      .food-panel, .macro-chips, .option-toggle { padding-left: 16px; padding-right: 16px; }
+      .generate-card { flex-direction: column; }
+      .generate-btns { width: 100%; }
+      .gen-btn { flex: 1; justify-content: center; }
     }
   </style>
+
 </head>
 <body>
 
 <div id="progress-bar"></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast"><span id="toast-text"></span></div>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-icon" id="modal-icon">🛒</div>
+    <h3 id="modal-title">Lista Gerada!</h3>
+    <p id="modal-desc">Sua lista de compras está pronta. Escolha como deseja exportar:</p>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ─── HERO ─── -->
 
 <header class="hero">
   <div class="hero-circles"><span></span><span></span><span></span></div>
@@ -514,384 +940,450 @@
 
 <div class="container">
 
-  <div class="tabs" style="margin-top:36px">
-    <button class="tab-btn active" onclick="filterDay('all')">📋 Todas</button>
-    <button class="tab-btn" onclick="filterDay('1')">🌅 Café <span class="time-badge">07:00</span></button>
-    <button class="tab-btn" onclick="filterDay('2')">☀️ Almoço <span class="time-badge">11:30</span></button>
-    <button class="tab-btn" onclick="filterDay('3')">🌤 Lanche <span class="time-badge">16:00</span></button>
-    <button class="tab-btn" onclick="filterDay('4')">🌙 Jantar <span class="time-badge">20:00</span></button>
-  </div>
+  <!-- ─── PROGRESS TRACKER ─── -->
 
-  <div class="meal-card" data-meal="1">
-    <div class="meal-top">
-      <div class="meal-icon">🌅</div>
-      <div class="meal-meta">
-        <h2>Café da Manhã</h2>
-        <span>REFEIÇÃO 1 · 07:00</span>
-      </div>
-      <div class="meal-kcal">430<small>kcal</small></div>
-    </div>
-    <div class="macro-chips">
-      <span class="chip chip-p">🥩 Proteínas 25g</span>
-      <span class="chip chip-c">🌾 Carbos 50g</span>
-      <span class="chip chip-g">🫒 Gorduras 15g</span>
-    </div>
-    <div class="option-toggle">
-      <button class="opt-btn active" onclick="switchOpt(this,'meal1','a')">🍳 Opção 1</button>
-      <button class="opt-btn" onclick="switchOpt(this,'meal1','b')">🥤 Opção 2</button>
-    </div>
-    
-    <div class="food-panel visible" id="meal1-a">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="Pão integral" onerror="imgFallback(this,'🍞')">
-        <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
-        <span class="food-kcal">140 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=200&q=80" alt="Ovos mexidos" onerror="imgFallback(this,'🍳')">
-        <div class="food-info"><strong>Ovos Mexidos</strong><span>2 unidades inteiros</span></div>
-        <span class="food-kcal">140 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="Banana" onerror="imgFallback(this,'🍌')">
-        <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Manteiga" onerror="imgFallback(this,'🧈')">
-        <div class="food-info"><strong>Manteiga</strong><span>1 colher de chá</span></div>
-        <span class="food-kcal">40 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Pasta de amendoim" onerror="imgFallback(this,'🥜')">
-        <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <div class="food-img-placeholder">💊</div>
-        <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
-        <span class="food-kcal">0 kcal</span>
+  <div class="tracker-bar" style="margin-top:36px">
+    <div class="tracker-kcal">
+      <div class="tracker-ring">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle class="ring-bg" cx="36" cy="36" r="30"/>
+          <circle class="ring-fill" id="kcal-ring" cx="36" cy="36" r="30"/>
+        </svg>
+        <div class="ring-text">
+          <span id="kcal-consumed">0</span>
+          <small>KCAL</small>
+        </div>
       </div>
     </div>
-    
-    <div class="food-panel" id="meal1-b">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Whey protein" onerror="imgFallback(this,'🥤')">
-        <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
-        <span class="food-kcal">120 kcal</span>
+    <div class="tracker-stats">
+      <div class="tracker-stat t-bar-p">
+        <div class="t-val" id="stat-p">0g</div>
+        <div class="t-lbl">Proteínas</div>
+        <div class="t-bar"><div class="t-bar-fill" id="bar-p" style="width:0%"></div></div>
       </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="Torradas integrais" onerror="imgFallback(this,'🍞')">
-        <div class="food-info"><strong>Torradas Integrais</strong><span>2 unidades</span></div>
-        <span class="food-kcal">140 kcal</span>
+      <div class="tracker-stat t-bar-c">
+        <div class="t-val" id="stat-c">0g</div>
+        <div class="t-lbl">Carbos</div>
+        <div class="t-bar"><div class="t-bar-fill" id="bar-c" style="width:0%"></div></div>
       </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Pasta de amendoim" onerror="imgFallback(this,'🥜')">
-        <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="Banana" onerror="imgFallback(this,'🍌')">
-        <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <div class="food-img-placeholder">💊</div>
-        <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
-        <span class="food-kcal">0 kcal</span>
+      <div class="tracker-stat t-bar-g">
+        <div class="t-val" id="stat-g">0g</div>
+        <div class="t-lbl">Gorduras</div>
+        <div class="t-bar"><div class="t-bar-fill" id="bar-g" style="width:0%"></div></div>
       </div>
     </div>
   </div>
 
-  <div class="meal-card" data-meal="2">
-    <div class="meal-top">
-      <div class="meal-icon">☀️</div>
-      <div class="meal-meta">
-        <h2>Almoço</h2>
-        <span>REFEIÇÃO 2 · 11:30</span>
-      </div>
-      <div class="meal-kcal">660<small>kcal</small></div>
-    </div>
-    <div class="macro-chips">
-      <span class="chip chip-p">🥩 Proteínas 45g</span>
-      <span class="chip chip-c">🌾 Carbos 70g</span>
-      <span class="chip chip-g">🫒 Gorduras 18g</span>
-    </div>
-    <div class="option-toggle">
-      <button class="opt-btn active" onclick="switchOpt(this,'meal2','a')">🍗 Opção 1</button>
-      <button class="opt-btn" onclick="switchOpt(this,'meal2','b')">🥡 Opção 2</button>
-    </div>
-    
-    <div class="food-panel visible" id="meal2-a">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="Arroz" onerror="imgFallback(this,'🍚')">
-        <div class="food-info"><strong>Arroz Branco Cozido</strong><span>120g</span></div>
-        <span class="food-kcal">160 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=200&q=80" alt="Frango" onerror="imgFallback(this,'🍗')">
-        <div class="food-info"><strong>Peito de Frango Grelhado</strong><span>150g</span></div>
-        <span class="food-kcal">240 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=200&q=80" alt="Batata doce" onerror="imgFallback(this,'🍠')">
-        <div class="food-info"><strong>Batata Doce Cozida</strong><span>100g</span></div>
-        <span class="food-kcal">80 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&q=80" alt="Salada" onerror="imgFallback(this,'🥗')">
-        <div class="food-info"><strong>Salada de Folhas c/ Tomate</strong><span>1 prato</span></div>
-        <span class="food-kcal">20 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="Azeite" onerror="imgFallback(this,'🫒')">
-        <div class="food-info"><strong>Azeite Extra Virgem</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=200&q=80" alt="Abacaxi" onerror="imgFallback(this,'🍍')">
-        <div class="food-info"><strong>Abacaxi</strong><span>1 fatia</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-    </div>
-    
-    <div class="food-panel" id="meal2-b">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=200&q=80" alt="Marmita" onerror="imgFallback(this,'🥡')">
-        <div class="food-info"><strong>Marmita Pronta</strong><span>Arroz, frango e legumes</span></div>
-        <span class="food-kcal">500 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="Azeite" onerror="imgFallback(this,'🫒')">
-        <div class="food-info"><strong>Azeite Extra</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">50 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&q=80" alt="Maçã" onerror="imgFallback(this,'🍎')">
-        <div class="food-info"><strong>Maçã Pequena</strong><span>1 unidade</span></div>
-        <span class="food-kcal">70 kcal</span>
-      </div>
-    </div>
-  </div>
+  <!-- ─── MAIN NAV ─── -->
 
-  <div class="meal-card" data-meal="3">
-    <div class="meal-top">
-      <div class="meal-icon">🌤</div>
-      <div class="meal-meta">
-        <h2>Lanche da Tarde</h2>
-        <span>REFEIÇÃO 3 · 16:00</span>
-      </div>
-      <div class="meal-kcal">440<small>kcal</small></div>
-    </div>
-    <div class="macro-chips">
-      <span class="chip chip-p">🥩 Proteínas 20g</span>
-      <span class="chip chip-c">🌾 Carbos 35g</span>
-      <span class="chip chip-g">🫒 Gorduras 15g</span>
-    </div>
-    <div class="option-toggle">
-      <button class="opt-btn active" onclick="switchOpt(this,'meal3','a')">🥤 Opção 1</button>
-      <button class="opt-btn" onclick="switchOpt(this,'meal3','b')">🥣 Opção 2</button>
-    </div>
-    
-    <div class="food-panel visible" id="meal3-a">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Whey" onerror="imgFallback(this,'🥤')">
-        <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
-        <span class="food-kcal">120 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="Pão" onerror="imgFallback(this,'🍞')">
-        <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
-        <span class="food-kcal">140 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Pasta amendoim" onerror="imgFallback(this,'🥜')">
-        <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa cheia</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="Banana" onerror="imgFallback(this,'🍌')">
-        <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=200&q=80" alt="Castanhas" onerror="imgFallback(this,'🥜')">
-        <div class="food-info"><strong>Castanhas de Caju</strong><span>5 unidades</span></div>
-        <span class="food-kcal">40 kcal</span>
-      </div>
-    </div>
-    
-    <div class="food-panel" id="meal3-b">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&q=80" alt="Iogurte" onerror="imgFallback(this,'🥛')">
-        <div class="food-info"><strong>Iogurte Natural Integral</strong><span>1 pote</span></div>
-        <span class="food-kcal">100 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1584806749948-697891c67821?w=200&q=80" alt="Granola" onerror="imgFallback(this,'🥣')">
-        <div class="food-info"><strong>Granola</strong><span>3 colheres de sopa</span></div>
-        <span class="food-kcal">180 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Pasta amendoim" onerror="imgFallback(this,'🥜')">
-        <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=200&q=80" alt="Mel" onerror="imgFallback(this,'🍯')">
-        <div class="food-info"><strong>Mel</strong><span>1 colher de chá</span></div>
-        <span class="food-kcal">30 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="Banana" onerror="imgFallback(this,'🍌')">
-        <div class="food-info"><strong>Banana Pequena</strong><span>1 unidade</span></div>
-        <span class="food-kcal">40 kcal</span>
-      </div>
-    </div>
-  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('diet', this)"><span class="tab-icon">🥗</span> <span>Dieta</span></button>
+    <button class="nav-tab" onclick="showPage('shop', this)"><span class="tab-icon">🛒</span> <span>Lista de Compras</span></button>
+  </nav>
 
-  <div class="meal-card" data-meal="4">
-    <div class="meal-top">
-      <div class="meal-icon">🌙</div>
-      <div class="meal-meta">
-        <h2>Jantar</h2>
-        <span>REFEIÇÃO 4 · 20:00</span>
-      </div>
-      <div class="meal-kcal">530<small>kcal</small></div>
-    </div>
-    <div class="macro-chips">
-      <span class="chip chip-p">🥩 Proteínas 35g</span>
-      <span class="chip chip-c">🌾 Carbos 40g</span>
-      <span class="chip chip-g">🫒 Gorduras 18g</span>
-    </div>
-    <div class="option-toggle">
-      <button class="opt-btn active" onclick="switchOpt(this,'meal4','a')">🍖 Opção 1</button>
-      <button class="opt-btn" onclick="switchOpt(this,'meal4','b')">🍳 Opção 2</button>
-    </div>
-    
-    <div class="food-panel visible" id="meal4-a">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="Arroz" onerror="imgFallback(this,'🍚')">
-        <div class="food-info"><strong>Arroz Branco Cozido</strong><span>100g</span></div>
-        <span class="food-kcal">130 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=80" alt="Carne moída" onerror="imgFallback(this,'🥩')">
-        <div class="food-info"><strong>Carne Moída Magra Refogada</strong><span>150g com cebola e alho</span></div>
-        <span class="food-kcal">260 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="Legumes" onerror="imgFallback(this,'🥕')">
-        <div class="food-info"><strong>Legumes Cozidos</strong><span>Cenoura, vagem e abobrinha</span></div>
-        <span class="food-kcal">60 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="Azeite" onerror="imgFallback(this,'🫒')">
-        <div class="food-info"><strong>Azeite</strong><span>1 colher de sopa sobre legumes</span></div>
-        <span class="food-kcal">80 kcal</span>
-      </div>
-    </div>
-    
-    <div class="food-panel" id="meal4-b">
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&q=80" alt="Omelete" onerror="imgFallback(this,'🍳')">
-        <div class="food-info"><strong>Omelete</strong><span>3 ovos inteiros</span></div>
-        <span class="food-kcal">210 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="Pão" onerror="imgFallback(this,'🍞')">
-        <div class="food-info"><strong>Pão Integral</strong><span>1 fatia</span></div>
-        <span class="food-kcal">70 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="" alt="Requeijão" onerror="imgFallback(this,'🧀')">
-        <div class="food-info"><strong>Requeijão Light</strong><span>1 colher de sopa</span></div>
-        <span class="food-kcal">30 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&q=80" alt="Leite" onerror="imgFallback(this,'🥛')">
-        <div class="food-info"><strong>Leite Desnatado</strong><span>1 copo</span></div>
-        <span class="food-kcal">100 kcal</span>
-      </div>
-      <div class="food-item" onclick="toggleFood(this)">
-        <div class="food-checkbox"></div>
-        <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="Legumes" onerror="imgFallback(this,'🥕')">
-        <div class="food-info"><strong>Legumes Cozidos</strong><span>1 prato pequeno</span></div>
-        <span class="food-kcal">90 kcal</span>
-      </div>
-    </div>
-  </div>
+  <!-- ══════════════════════ DIET PAGE ══════════════════════ -->
 
-  <div class="summary-card">
-    <h3>📊 Resumo Nutricional Diário</h3>
-    <div class="summary-grid">
-      <div class="sum-item">
-        <span class="val">2200</span>
-        <span class="lbl">kcal / dia</span>
-      </div>
-      <div class="sum-item">
-        <span class="val">165g</span>
-        <span class="lbl">Proteínas</span>
-      </div>
-      <div class="sum-item">
-        <span class="val">275g</span>
-        <span class="lbl">Carboidratos</span>
-      </div>
-      <div class="sum-item">
-        <span class="val">73g</span>
-        <span class="lbl">Gorduras</span>
-      </div>
-    </div>
-  </div>
+  <div class="page-section active" id="page-diet">
 
-  <div class="actions">
-    <button class="action-btn btn-primary" onclick="printPlan()">
-      🖨️ Imprimir Plano
-    </button>
-    <button class="action-btn btn-outline" onclick="copyPlan()">
-      📋 Copiar Resumo
-    </button>
-  </div>
-
+```
+<div class="filter-tabs">
+  <button class="filter-btn active" onclick="filterMeal('all', this)">📋 Todas</button>
+  <button class="filter-btn" onclick="filterMeal('1', this)">🌅 Café <span class="time-badge">07:00</span></button>
+  <button class="filter-btn" onclick="filterMeal('2', this)">☀️ Almoço <span class="time-badge">11:30</span></button>
+  <button class="filter-btn" onclick="filterMeal('3', this)">🌤 Lanche <span class="time-badge">16:00</span></button>
+  <button class="filter-btn" onclick="filterMeal('4', this)">🌙 Jantar <span class="time-badge">20:00</span></button>
 </div>
+
+<!-- MEAL 1 -->
+<div class="meal-card" data-meal="1" style="animation-delay:.05s">
+  <div class="meal-progress"><div class="meal-progress-fill" id="mp-1" style="width:0%"></div></div>
+  <div class="meal-top">
+    <div class="meal-icon">🌅</div>
+    <div class="meal-meta"><h2>Café da Manhã</h2><span>REFEIÇÃO 1 · 07:00</span></div>
+    <div class="meal-kcal">430<small>kcal</small></div>
+  </div>
+  <div class="macro-chips">
+    <span class="chip chip-p">🥩 Prot. 25g</span>
+    <span class="chip chip-c">🌾 Carbos 50g</span>
+    <span class="chip chip-g">🫒 Gord. 15g</span>
+  </div>
+  <div class="option-toggle">
+    <button class="opt-btn active" onclick="switchOpt(this,'meal1','a')">🍳 Opção 1</button>
+    <button class="opt-btn" onclick="switchOpt(this,'meal1','b')">🥤 Opção 2</button>
+  </div>
+  <div class="food-panel visible" id="meal1-a">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="140" data-p="5" data-c="24" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="imgFallback(this,'🍞')">
+      <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
+      <span class="food-kcal">140 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="140" data-p="12" data-c="1" data-g="10">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=200&q=80" alt="" onerror="imgFallback(this,'🍳')">
+      <div class="food-info"><strong>Ovos Mexidos</strong><span>2 unidades inteiros</span></div>
+      <span class="food-kcal">140 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="imgFallback(this,'🍌')">
+      <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="40" data-p="0" data-c="0" data-g="4">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🧈</div>
+      <div class="food-info"><strong>Manteiga</strong><span>1 colher de chá</span></div>
+      <span class="food-kcal">40 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥜</div>
+      <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="0" data-p="0" data-c="0" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">💊</div>
+      <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
+      <span class="food-kcal">0 kcal</span>
+    </div>
+  </div>
+  <div class="food-panel" id="meal1-b">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="120" data-p="24" data-c="3" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥤</div>
+      <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
+      <span class="food-kcal">120 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="140" data-p="4" data-c="26" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="imgFallback(this,'🍞')">
+      <div class="food-info"><strong>Torradas Integrais</strong><span>2 unidades</span></div>
+      <span class="food-kcal">140 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥜</div>
+      <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="imgFallback(this,'🍌')">
+      <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="0" data-p="0" data-c="0" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">💊</div>
+      <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
+      <span class="food-kcal">0 kcal</span>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL 2 -->
+<div class="meal-card" data-meal="2" style="animation-delay:.12s">
+  <div class="meal-progress"><div class="meal-progress-fill" id="mp-2" style="width:0%"></div></div>
+  <div class="meal-top">
+    <div class="meal-icon">☀️</div>
+    <div class="meal-meta"><h2>Almoço</h2><span>REFEIÇÃO 2 · 11:30</span></div>
+    <div class="meal-kcal">660<small>kcal</small></div>
+  </div>
+  <div class="macro-chips">
+    <span class="chip chip-p">🥩 Prot. 45g</span>
+    <span class="chip chip-c">🌾 Carbos 70g</span>
+    <span class="chip chip-g">🫒 Gord. 18g</span>
+  </div>
+  <div class="option-toggle">
+    <button class="opt-btn active" onclick="switchOpt(this,'meal2','a')">🍗 Opção 1</button>
+    <button class="opt-btn" onclick="switchOpt(this,'meal2','b')">🥡 Opção 2</button>
+  </div>
+  <div class="food-panel visible" id="meal2-a">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="160" data-p="3" data-c="35" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="" onerror="imgFallback(this,'🍚')">
+      <div class="food-info"><strong>Arroz Branco Cozido</strong><span>120g</span></div>
+      <span class="food-kcal">160 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="240" data-p="37" data-c="0" data-g="9">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=200&q=80" alt="" onerror="imgFallback(this,'🍗')">
+      <div class="food-info"><strong>Peito de Frango Grelhado</strong><span>150g</span></div>
+      <span class="food-kcal">240 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="80" data-p="1" data-c="19" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=200&q=80" alt="" onerror="imgFallback(this,'🍠')">
+      <div class="food-info"><strong>Batata Doce Cozida</strong><span>100g</span></div>
+      <span class="food-kcal">80 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="20" data-p="1" data-c="4" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&q=80" alt="" onerror="imgFallback(this,'🥗')">
+      <div class="food-info"><strong>Salada de Folhas c/ Tomate</strong><span>1 prato</span></div>
+      <span class="food-kcal">20 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="0" data-c="0" data-g="10">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="imgFallback(this,'🫒')">
+      <div class="food-info"><strong>Azeite Extra Virgem</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="1" data-c="22" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=200&q=80" alt="" onerror="imgFallback(this,'🍍')">
+      <div class="food-info"><strong>Abacaxi</strong><span>1 fatia</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+  </div>
+  <div class="food-panel" id="meal2-b">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="500" data-p="35" data-c="55" data-g="12">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=200&q=80" alt="" onerror="imgFallback(this,'🥡')">
+      <div class="food-info"><strong>Marmita Pronta</strong><span>Arroz, frango e legumes</span></div>
+      <span class="food-kcal">500 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="50" data-p="0" data-c="0" data-g="6">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="imgFallback(this,'🫒')">
+      <div class="food-info"><strong>Azeite Extra</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">50 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="70" data-p="0" data-c="18" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&q=80" alt="" onerror="imgFallback(this,'🍎')">
+      <div class="food-info"><strong>Maçã Pequena</strong><span>1 unidade</span></div>
+      <span class="food-kcal">70 kcal</span>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL 3 -->
+<div class="meal-card" data-meal="3" style="animation-delay:.19s">
+  <div class="meal-progress"><div class="meal-progress-fill" id="mp-3" style="width:0%"></div></div>
+  <div class="meal-top">
+    <div class="meal-icon">🌤</div>
+    <div class="meal-meta"><h2>Lanche da Tarde</h2><span>REFEIÇÃO 3 · 16:00</span></div>
+    <div class="meal-kcal">440<small>kcal</small></div>
+  </div>
+  <div class="macro-chips">
+    <span class="chip chip-p">🥩 Prot. 20g</span>
+    <span class="chip chip-c">🌾 Carbos 35g</span>
+    <span class="chip chip-g">🫒 Gord. 15g</span>
+  </div>
+  <div class="option-toggle">
+    <button class="opt-btn active" onclick="switchOpt(this,'meal3','a')">🥤 Opção 1</button>
+    <button class="opt-btn" onclick="switchOpt(this,'meal3','b')">🥣 Opção 2</button>
+  </div>
+  <div class="food-panel visible" id="meal3-a">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="120" data-p="24" data-c="3" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥤</div>
+      <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
+      <span class="food-kcal">120 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="140" data-p="5" data-c="24" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="imgFallback(this,'🍞')">
+      <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
+      <span class="food-kcal">140 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥜</div>
+      <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa cheia</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="imgFallback(this,'🍌')">
+      <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="40" data-p="1" data-c="2" data-g="3">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=200&q=80" alt="" onerror="imgFallback(this,'🥜')">
+      <div class="food-info"><strong>Castanhas de Caju</strong><span>5 unidades</span></div>
+      <span class="food-kcal">40 kcal</span>
+    </div>
+  </div>
+  <div class="food-panel" id="meal3-b">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="100" data-p="6" data-c="8" data-g="5">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&q=80" alt="" onerror="imgFallback(this,'🥛')">
+      <div class="food-info"><strong>Iogurte Natural Integral</strong><span>1 pote</span></div>
+      <span class="food-kcal">100 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="180" data-p="4" data-c="28" data-g="7">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1584806749948-697891c67821?w=200&q=80" alt="" onerror="imgFallback(this,'🥣')">
+      <div class="food-info"><strong>Granola</strong><span>3 colheres de sopa</span></div>
+      <span class="food-kcal">180 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🥜</div>
+      <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="30" data-p="0" data-c="8" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=200&q=80" alt="" onerror="imgFallback(this,'🍯')">
+      <div class="food-info"><strong>Mel</strong><span>1 colher de chá</span></div>
+      <span class="food-kcal">30 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="40" data-p="0" data-c="10" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="imgFallback(this,'🍌')">
+      <div class="food-info"><strong>Banana Pequena</strong><span>1 unidade</span></div>
+      <span class="food-kcal">40 kcal</span>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL 4 -->
+<div class="meal-card" data-meal="4" style="animation-delay:.26s">
+  <div class="meal-progress"><div class="meal-progress-fill" id="mp-4" style="width:0%"></div></div>
+  <div class="meal-top">
+    <div class="meal-icon">🌙</div>
+    <div class="meal-meta"><h2>Jantar</h2><span>REFEIÇÃO 4 · 20:00</span></div>
+    <div class="meal-kcal">530<small>kcal</small></div>
+  </div>
+  <div class="macro-chips">
+    <span class="chip chip-p">🥩 Prot. 35g</span>
+    <span class="chip chip-c">🌾 Carbos 40g</span>
+    <span class="chip chip-g">🫒 Gord. 18g</span>
+  </div>
+  <div class="option-toggle">
+    <button class="opt-btn active" onclick="switchOpt(this,'meal4','a')">🍖 Opção 1</button>
+    <button class="opt-btn" onclick="switchOpt(this,'meal4','b')">🍳 Opção 2</button>
+  </div>
+  <div class="food-panel visible" id="meal4-a">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="130" data-p="2" data-c="29" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="" onerror="imgFallback(this,'🍚')">
+      <div class="food-info"><strong>Arroz Branco Cozido</strong><span>100g</span></div>
+      <span class="food-kcal">130 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="260" data-p="28" data-c="4" data-g="14">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=80" alt="" onerror="imgFallback(this,'🥩')">
+      <div class="food-info"><strong>Carne Moída Magra Refogada</strong><span>150g com cebola e alho</span></div>
+      <span class="food-kcal">260 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="60" data-p="2" data-c="12" data-g="0">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="" onerror="imgFallback(this,'🥕')">
+      <div class="food-info"><strong>Legumes Cozidos</strong><span>Cenoura, vagem e abobrinha</span></div>
+      <span class="food-kcal">60 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="80" data-p="0" data-c="0" data-g="9">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="imgFallback(this,'🫒')">
+      <div class="food-info"><strong>Azeite</strong><span>1 colher de sopa sobre legumes</span></div>
+      <span class="food-kcal">80 kcal</span>
+    </div>
+  </div>
+  <div class="food-panel" id="meal4-b">
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="210" data-p="18" data-c="1" data-g="15">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&q=80" alt="" onerror="imgFallback(this,'🍳')">
+      <div class="food-info"><strong>Omelete</strong><span>3 ovos inteiros</span></div>
+      <span class="food-kcal">210 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="70" data-p="2" data-c="12" data-g="1">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="imgFallback(this,'🍞')">
+      <div class="food-info"><strong>Pão Integral</strong><span>1 fatia</span></div>
+      <span class="food-kcal">70 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="30" data-p="1" data-c="2" data-g="2">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <div class="food-img-placeholder">🧀</div>
+      <div class="food-info"><strong>Requeijão Light</strong><span>1 colher de sopa</span></div>
+      <span class="food-kcal">30 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="100" data-p="10" data-c="12" data-g="1">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&q=80" alt="" onerror="imgFallback(this,'🥛')">
+      <div class="food-info"><strong>Leite Desnatado</strong><span>1 copo</span></div>
+      <span class="food-kcal">100 kcal</span>
+    </div>
+    <div class="food-item" onclick="toggleFood(this)" data-kcal="90" data-p="3" data-c="18" data-g="1">
+      <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+      <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="" onerror="imgFallback(this,'🥕')">
+      <div class="food-info"><strong>Legumes Cozidos</strong><span>1 prato pequeno</span></div>
+      <span class="food-kcal">90 kcal</span>
+    </div>
+  </div>
+</div>
+
+<div class="summary-card">
+  <h3>📊 Resumo Nutricional Diário</h3>
+  <div class="summary-grid">
+    <div class="sum-item"><span class="val">2200</span><span class="lbl">kcal / dia</span></div>
+    <div class="sum-item"><span class="val">165g</span><span class="lbl">Proteínas</span></div>
+    <div class="sum-item"><span class="val">275g</span><span class="lbl">Carboidratos</span></div>
+    <div class="sum-item"><span class="val">73g</span><span class="lbl">Gorduras</span></div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="action-btn btn-primary" onclick="printPlan()">🖨️ Imprimir Plano</button>
+  <button class="action-btn btn-outline" onclick="copyPlan()">📋 Copiar Resumo</button>
+</div>
+```
+
+  </div><!-- /page-diet -->
+
+  <!-- ══════════════════════ SHOPPING PAGE ══════════════════════ -->
+
+  <div class="page-section" id="page-shop">
+
+```
+<div class="shop-header">
+  <div class="shop-icon-big">🛒</div>
+  <div class="shop-header-text">
+    <h2>Lista de Compras</h2>
+    <p>Selecione os itens que deseja incluir e gere sua lista personalizada</p>
+  </div>
+  <div class="shop-count-badge" id="shop-count-badge">0 selecionados</div>
+</div>
+
+<div class="shop-controls">
+  <button class="shop-ctrl-btn" onclick="selectAllShop()">✓ Selecionar Todos</button>
+  <button class="shop-ctrl-btn" onclick="selectNoneShop()">✕ Limpar Seleção</button>
+  <button class="shop-ctrl-btn" onclick="selectFromDiet()">🥗 Do Plano Alimentar</button>
+  <input type="text" class="shop-search" placeholder="🔍 Buscar item..." id="shop-search-input" oninput="filterShopItems()">
+</div>
+
+<div id="shop-list-container"></div>
+
+<div class="generate-panel">
+  <div class="generate-card">
+    <div class="generate-info">
+      <strong id="gen-label">0 itens selecionados</strong>
+      <span>Escolha o formato de exportação</span>
+    </div>
+    <div class="generate-btns">
+      <button class="gen-btn gen-btn-pdf" onclick="generateShoppingList('pdf')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Gerar PDF
+      </button>
+      <button class="gen-btn gen-btn-txt" onclick="generateShoppingList('txt')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar TXT
+      </button>
+    </div>
+  </div>
+</div>
+```
+
+  </div><!-- /page-shop -->
+
+</div><!-- /container -->
 
 <footer>
   <p>Gerado pela <strong>NutriPlan</strong> · 07/04/2026</p>
@@ -899,104 +1391,515 @@
 </footer>
 
 <script>
-  // INTERATIVIDADE: Marcar alimento como consumido
-  function toggleFood(el) {
-    el.classList.toggle('eaten');
-    
-    if(el.classList.contains('eaten')) {
-        const msgs = ['Boa!', 'Mais um pro plano!', 'Foco total!', 'Registrado!'];
-        showToast('✅ ' + msgs[Math.floor(Math.random() * msgs.length)]);
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+const SHOP_DATA = {
+  "🥩 Proteínas & Laticínios": [
+    { name: "Peito de Frango", emoji: "🍗" },
+    { name: "Carne Moída Magra", emoji: "🥩" },
+    { name: "Ovos", emoji: "🥚" },
+    { name: "Iogurte Natural Integral", emoji: "🥛" },
+    { name: "Leite Desnatado", emoji: "🥛" },
+    { name: "Requeijão Light", emoji: "🧀" },
+  ],
+  "🌾 Carboidratos & Grãos": [
+    { name: "Arroz Branco", emoji: "🍚" },
+    { name: "Pão Integral", emoji: "🍞" },
+    { name: "Torradas Integrais", emoji: "🍞" },
+    { name: "Granola", emoji: "🥣" },
+  ],
+  "🍎 Frutas & Legumes": [
+    { name: "Banana", emoji: "🍌" },
+    { name: "Abacaxi", emoji: "🍍" },
+    { name: "Maçã", emoji: "🍎" },
+    { name: "Batata Doce", emoji: "🍠" },
+    { name: "Tomate", emoji: "🍅" },
+    { name: "Cenoura", emoji: "🥕" },
+    { name: "Vagem", emoji: "🫛" },
+    { name: "Abobrinha", emoji: "🥒" },
+    { name: "Alface / Rúcula", emoji: "🥬" },
+    { name: "Cebola", emoji: "🧅" },
+    { name: "Alho", emoji: "🧄" },
+  ],
+  "🫒 Gorduras & Condimentos": [
+    { name: "Azeite Extra Virgem", emoji: "🫒" },
+    { name: "Pasta de Amendoim", emoji: "🥜" },
+    { name: "Manteiga", emoji: "🧈" },
+    { name: "Castanhas de Caju", emoji: "🥜" },
+    { name: "Mel", emoji: "🍯" },
+  ],
+  "💊 Suplementos": [
+    { name: "Creatina Monoidratada", emoji: "💊" },
+    { name: "Whey Protein", emoji: "🥤" },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let selectedShopItems = new Set();
+let eatenKcal = 0, eatenP = 0, eatenC = 0, eatenG = 0;
+const TOTAL_KCAL = 2200, TOTAL_P = 165, TOTAL_C = 275, TOTAL_G = 73;
+const MEAL_KCAL = { 1: 430, 2: 660, 3: 440, 4: 530 };
+
+/* ═══════════════════════════════════════════════════
+   SHOPPING LIST INIT
+═══════════════════════════════════════════════════ */
+function buildShopList() {
+  const container = document.getElementById('shop-list-container');
+  container.innerHTML = '';
+
+  Object.entries(SHOP_DATA).forEach(([cat, items]) => {
+    const catId = 'cat_' + cat.replace(/\W/g,'_');
+    const div = document.createElement('div');
+    div.className = 'shop-category';
+    div.id = catId;
+
+    const selectedInCat = items.filter(i => selectedShopItems.has(i.name)).length;
+    div.innerHTML = `
+      <div class="shop-cat-header" onclick="toggleCategory('${catId}')">
+        <span class="shop-cat-icon">${cat.split(' ')[0]}</span>
+        <span class="shop-cat-name">${cat.split(' ').slice(1).join(' ')}</span>
+        <span class="shop-cat-count" id="${catId}_count">${selectedInCat}/${items.length}</span>
+        <span class="shop-cat-chevron">▼</span>
+      </div>
+      <div class="shop-cat-body">
+        ${items.map(item => buildShopItem(item)).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function buildShopItem(item) {
+  const sel = selectedShopItems.has(item.name) ? 'selected' : '';
+  return `
+    <div class="shop-item ${sel}" data-name="${item.name}" onclick="toggleShopItem(this, '${item.name}')">
+      <div class="shop-check">
+        <svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="shop-item-emoji">${item.emoji}</span>
+      <span class="shop-item-name">${item.name}</span>
+    </div>
+  `;
+}
+
+function toggleCategory(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function toggleShopItem(el, name) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    selectedShopItems.add(name);
+  } else {
+    selectedShopItems.delete(name);
+  }
+  updateShopCounts();
+}
+
+function updateShopCounts() {
+  const total = selectedShopItems.size;
+  document.getElementById('shop-count-badge').textContent = total + ' selecionados';
+  document.getElementById('gen-label').textContent = total + ' ite' + (total === 1 ? 'm selecionado' : 'ns selecionados');
+
+  // Update cat counts
+  Object.entries(SHOP_DATA).forEach(([cat, items]) => {
+    const catId = 'cat_' + cat.replace(/\W/g,'_');
+    const el = document.getElementById(catId + '_count');
+    if (el) {
+      const sel = items.filter(i => selectedShopItems.has(i.name)).length;
+      el.textContent = sel + '/' + items.length;
+      el.style.background = sel > 0 ? 'var(--green)' : 'var(--green-xl)';
+      el.style.color = sel > 0 ? 'white' : 'var(--green)';
     }
+  });
+}
+
+function selectAllShop() {
+  Object.values(SHOP_DATA).flat().forEach(i => selectedShopItems.add(i.name));
+  document.querySelectorAll('.shop-item').forEach(el => el.classList.add('selected'));
+  updateShopCounts();
+  showToast('✓ Todos os itens selecionados');
+}
+
+function selectNoneShop() {
+  selectedShopItems.clear();
+  document.querySelectorAll('.shop-item').forEach(el => el.classList.remove('selected'));
+  updateShopCounts();
+  showToast('✕ Seleção limpa');
+}
+
+function selectFromDiet() {
+  selectAllShop();
+}
+
+function filterShopItems() {
+  const q = document.getElementById('shop-search-input').value.toLowerCase();
+  document.querySelectorAll('.shop-item').forEach(el => {
+    const match = el.querySelector('.shop-item-name').textContent.toLowerCase().includes(q);
+    el.style.display = match ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   GENERATE SHOPPING LIST
+═══════════════════════════════════════════════════ */
+function generateShoppingList(format) {
+  if (selectedShopItems.size === 0) {
+    showToast('⚠️ Selecione ao menos 1 item!');
+    return;
   }
 
-  // OPTION TOGGLE
-  function switchOpt(btn, meal, opt) {
-    const btns = btn.parentElement.querySelectorAll('.opt-btn');
-    btns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    ['a','b','c'].forEach(o => {
-      const el = document.getElementById(meal + '-' + o);
-      if (el) el.classList.remove('visible');
+  if (format === 'txt') {
+    const text = buildTxtContent();
+    navigator.clipboard.writeText(text).then(() => {
+      openModal(
+        '📋',
+        'TXT Copiado!',
+        `${selectedShopItems.size} itens copiados para a área de transferência. Cole onde quiser!`,
+        [{ label: '✓ Fechar', cls: 'modal-btn-primary', fn: 'closeModal()' }]
+      );
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      openModal('📋','TXT Copiado!',`Lista copiada para o clipboard!`,[{label:'Fechar',cls:'modal-btn-primary',fn:'closeModal()'}]);
     });
-    
-    const target = document.getElementById(meal + '-' + opt);
-    if (target) {
-      target.classList.add('visible');
-      target.style.animation = 'none';
-      target.offsetHeight; 
-      target.style.animation = 'slideUp .3s both';
-    }
+  } else {
+    generatePDF();
   }
+}
 
-  // TAB FILTER
-  function filterDay(id) {
-    document.querySelectorAll('.tab-btn').forEach((b,i) => {
-      const ids = ['all','1','2','3','4'];
-      b.classList.toggle('active', ids[i] === id);
+function buildTxtContent() {
+  const date = '07/04/2026';
+  let lines = [];
+  lines.push('╔════════════════════════════════╗');
+  lines.push('║    NutriPlan - Lista de Compras ║');
+  lines.push('╚════════════════════════════════╝');
+  lines.push(`  Data: ${date}  |  ${selectedShopItems.size} itens`);
+  lines.push('');
+
+  Object.entries(SHOP_DATA).forEach(([cat, items]) => {
+    const sel = items.filter(i => selectedShopItems.has(i.name));
+    if (sel.length === 0) return;
+    lines.push(`── ${cat} ──`);
+    sel.forEach(i => {
+      lines.push(`  ${i.emoji}  ${i.name}`);
     });
-    document.querySelectorAll('.meal-card').forEach(card => {
-      if (id === 'all') {
-        card.style.display = '';
-      } else {
-        card.style.display = card.dataset.meal === id ? '' : 'none';
-      }
-    });
-  }
-
-  // IMAGE FALLBACK (Gera emoji quando a imagem falha ou é deixada em branco)
-  function imgFallback(img, emoji) {
-    const ph = document.createElement('div');
-    ph.className = 'food-img-placeholder';
-    ph.textContent = emoji;
-    img.replaceWith(ph);
-  }
-
-  // SCROLL PROGRESS BAR
-  window.addEventListener('scroll', () => {
-    const d = document.documentElement;
-    const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
-    document.getElementById('progress-bar').style.width = pct + '%';
+    lines.push('');
   });
 
-  // PRINT
-  function printPlan() {
-    document.querySelectorAll('.food-panel').forEach(p => p.classList.add('visible'));
-    window.print();
-    showToast('Preparando impressão…');
-  }
+  lines.push('─────────────────────────────────');
+  lines.push('  Plano: 2200 kcal | P:165g C:275g G:73g');
+  lines.push('  Gerado pela NutriPlan');
+  return lines.join('\n');
+}
 
-  // COPY SUMMARY
-  function copyPlan() {
-    const text =
-`NutriPlan – Plano Alimentar 2200kcal
-Macros: P 165g | C 275g | G 73g
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-Refeição 1 (07:00) – 430kcal
-Refeição 2 (11:30) – 660kcal
-Refeição 3 (16:00) – 440kcal
-Refeição 4 (20:00) – 530kcal
+  const W = 210, PAD = 18;
+  let y = 0;
 
-Total: 2200kcal`;
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('✅ Resumo copiado para a área de transferência!');
-    }).catch(() => {
-      showToast('Não foi possível copiar. Tente manualmente.');
+  // ── Background header ──
+  doc.setFillColor(27, 43, 31);
+  doc.rect(0, 0, W, 52, 'F');
+
+  // Decorative circle
+  doc.setFillColor(82, 183, 136, 30);
+  doc.circle(185, 15, 30, 'F');
+  doc.setFillColor(244, 162, 97, 20);
+  doc.circle(20, 45, 20, 'F');
+
+  // Title
+  doc.setTextColor(82, 183, 136);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NUTRIPLAN  ·  07/04/2026', PAD, 16);
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Lista de Compras', PAD, 30);
+
+  doc.setTextColor(255, 255, 255, 0.6);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(180, 200, 185);
+  doc.text(`${selectedShopItems.size} itens selecionados  ·  Plano 2200 kcal`, PAD, 40);
+
+  // Macro pills
+  const pills = [['P: 165g','#457B9D'],['C: 275g','#F4A261'],['G: 73g','#E76F51']];
+  let px = PAD;
+  pills.forEach(([label, color]) => {
+    const rgb = hexToRgb(color);
+    doc.setFillColor(...rgb, 80);
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.roundedRect(px, 44, 26, 6, 3, 3, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text(label, px + 13, 48, { align: 'center' });
+    px += 29;
+  });
+
+  y = 62;
+
+  // ── Categories ──
+  Object.entries(SHOP_DATA).forEach(([cat, items]) => {
+    const sel = items.filter(i => selectedShopItems.has(i.name));
+    if (sel.length === 0) return;
+
+    // Page break check
+    if (y > 250) { doc.addPage(); y = 20; }
+
+    // Category header
+    doc.setFillColor(240, 247, 242);
+    doc.roundedRect(PAD, y, W - PAD * 2, 10, 2, 2, 'F');
+    doc.setTextColor(27, 43, 31);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text(cat, PAD + 4, y + 7);
+
+    // Count badge
+    doc.setFillColor(45, 106, 79);
+    doc.roundedRect(W - PAD - 22, y + 2, 22, 6, 3, 3, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.text(`${sel.length} item${sel.length > 1 ? 's' : ''}`, W - PAD - 11, y + 6.5, { align: 'center' });
+
+    y += 14;
+
+    sel.forEach((item, idx) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+
+      // Alternating row BG
+      if (idx % 2 === 0) {
+        doc.setFillColor(254, 250, 224);
+        doc.roundedRect(PAD, y - 1, W - PAD * 2, 10, 2, 2, 'F');
+      }
+
+      // Checkbox square
+      doc.setDrawColor(82, 183, 136);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(PAD + 2, y + 1.5, 6, 6, 1.5, 1.5, 'D');
+
+      // Emoji placeholder (filled box)
+      doc.setFillColor(216, 243, 220);
+      doc.roundedRect(PAD + 11, y + 0.5, 8, 8, 2, 2, 'F');
+      // Item name
+      doc.setTextColor(27, 43, 31);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(item.name, PAD + 22, y + 6);
+
+      y += 11;
     });
-  }
 
-  // TOAST
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
+    y += 6;
+  });
 
-  // ENTRANCE ANIMATIONS
+  // ── Footer ──
+  if (y > 265) { doc.addPage(); y = 20; }
+
+  doc.setFillColor(27, 43, 31);
+  doc.rect(0, 285, W, 12, 'F');
+  doc.setTextColor(82, 183, 136);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.text('NutriPlan', PAD, 292);
+  doc.setTextColor(180, 200, 185);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Este plano é informativo. Consulte sempre um nutricionista.', W / 2, 292, { align: 'center' });
+  doc.setTextColor(82, 183, 136);
+  doc.text('07/04/2026', W - PAD, 292, { align: 'right' });
+
+  doc.save('NutriPlan_Lista_Compras.pdf');
+  showToast('📄 PDF gerado e salvo!');
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return [r, g, b];
+}
+
+/* ═══════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════ */
+function openModal(icon, title, desc, btns) {
+  document.getElementById('modal-icon').textContent = icon;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-desc').textContent = desc;
+  const acts = document.getElementById('modal-actions');
+  acts.innerHTML = btns.map(b =>
+    `<button class="modal-btn ${b.cls}" onclick="${b.fn}">${b.label}</button>`
+  ).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+/* ═══════════════════════════════════════════════════
+   DIET PAGE INTERACTIVITY
+═══════════════════════════════════════════════════ */
+function toggleFood(el) {
+  const wasEaten = el.classList.contains('eaten');
+  el.classList.toggle('eaten');
+  const kcal = parseInt(el.dataset.kcal) || 0;
+  const p = parseInt(el.dataset.p) || 0;
+  const c = parseInt(el.dataset.c) || 0;
+  const g = parseInt(el.dataset.g) || 0;
+  if (!wasEaten) {
+    eatenKcal += kcal; eatenP += p; eatenC += c; eatenG += g;
+    const msgs = ['Boa! 💪', 'Foco total!', 'Na dieta! 🥗', 'Registrado! ✅'];
+    showToast(msgs[Math.floor(Math.random() * msgs.length)]);
+  } else {
+    eatenKcal -= kcal; eatenP -= p; eatenC -= c; eatenG -= g;
+  }
+  updateTracker();
+  updateMealProgress(el);
+}
+
+function updateTracker() {
+  eatenKcal = Math.max(0, eatenKcal);
+  eatenP = Math.max(0, eatenP);
+  eatenC = Math.max(0, eatenC);
+  eatenG = Math.max(0, eatenG);
+
+  document.getElementById('kcal-consumed').textContent = eatenKcal;
+
+  // Ring: circumference = 2*π*30 ≈ 188.5
+  const circ = 188.5;
+  const pct = Math.min(eatenKcal / TOTAL_KCAL, 1);
+  document.getElementById('kcal-ring').style.strokeDashoffset = circ - (circ * pct);
+
+  // Color based on %
+  const ring = document.getElementById('kcal-ring');
+  if (pct < 0.5) ring.style.stroke = '#52B788';
+  else if (pct < 0.85) ring.style.stroke = '#F4A261';
+  else if (pct <= 1) ring.style.stroke = '#52B788';
+  else ring.style.stroke = '#E76F51';
+
+  document.getElementById('stat-p').textContent = eatenP + 'g';
+  document.getElementById('stat-c').textContent = eatenC + 'g';
+  document.getElementById('stat-g').textContent = eatenG + 'g';
+  document.getElementById('bar-p').style.width = Math.min(eatenP / TOTAL_P * 100, 100) + '%';
+  document.getElementById('bar-c').style.width = Math.min(eatenC / TOTAL_C * 100, 100) + '%';
+  document.getElementById('bar-g').style.width = Math.min(eatenG / TOTAL_G * 100, 100) + '%';
+}
+
+function updateMealProgress(foodEl) {
+  const card = foodEl.closest('.meal-card');
+  if (!card) return;
+  const mealId = card.dataset.meal;
+  const totalMealKcal = MEAL_KCAL[mealId] || 1;
+  const eatenInMeal = Array.from(card.querySelectorAll('.food-item.eaten'))
+    .reduce((sum, el) => sum + (parseInt(el.dataset.kcal) || 0), 0);
+  const pct = Math.min(eatenInMeal / totalMealKcal * 100, 100);
+  const bar = document.getElementById('mp-' + mealId);
+  if (bar) bar.style.width = pct + '%';
+}
+
+function switchOpt(btn, meal, opt) {
+  btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['a','b','c'].forEach(o => {
+    const el = document.getElementById(meal + '-' + o);
+    if (el) el.classList.remove('visible');
+  });
+  const target = document.getElementById(meal + '-' + opt);
+  if (target) {
+    target.classList.add('visible');
+    target.style.animation = 'none';
+    target.offsetHeight;
+    target.style.animation = 'slideUp .3s both';
+  }
+}
+
+function filterMeal(id, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.meal-card').forEach(card => {
+    card.style.display = (id === 'all' || card.dataset.meal === id) ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════ */
+function showPage(page, btn) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════
+   IMAGE FALLBACK
+═══════════════════════════════════════════════════ */
+function imgFallback(img, emoji) {
+  const ph = document.createElement('div');
+  ph.className = 'food-img-placeholder';
+  ph.textContent = emoji;
+  img.replaceWith(ph);
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const d = document.documentElement;
+  const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+/* ═══════════════════════════════════════════════════
+   PRINT & COPY
+═══════════════════════════════════════════════════ */
+function printPlan() {
+  document.querySelectorAll('.food-panel').forEach(p => p.classList.add('visible'));
+  window.print();
+}
+
+function copyPlan() {
+  const text = `NutriPlan – Plano Alimentar 2200kcal\nMacros: P 165g | C 275g | G 73g\n\nRefeição 1 (07:00) – 430kcal\nRefeição 2 (11:30) – 660kcal\nRefeição 3 (16:00) – 440kcal\nRefeição 4 (20:00) – 530kcal\n\nTotal: 2200kcal`;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Resumo copiado!')).catch(() => showToast('Não foi possível copiar.'));
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  buildShopList();
+  // stagger meal cards
   document.querySelectorAll('.meal-card').forEach((c, i) => {
     c.style.animationDelay = (i * 0.08) + 's';
   });
+});
 </script>
 
 </body>
