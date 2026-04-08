@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano Alimentar - 2200KCAL</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #e8f5e9;
+            --text-main: #333333;
+            --text-light: #666666;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+        .macros-overview {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .meal-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meal-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 22px;
+        }
+
+        .meal-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+            background-color: var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .meal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .option-box {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .option-title {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            position: absolute;
+            left: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid #ddd;
+        }
+
+        .total-calories {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        [span_0](start_span)<h1>PLANO ALIMENTAR - 2200KCAL[span_0](end_span)</h1>
+        <div class="macros-overview">
+            [span_1](start_span)<span>Proteínas: 165g[span_1](end_span)</span>
+            [span_2](start_span)<span>Carboidratos: 275g[span_2](end_span)</span>
+            [span_3](start_span)<span>Gorduras: 73g[span_3](end_span)</span>
+        </div>
+    </header>
+
+    <section class="meal-card">
+        <div class="meal-header">
+            [span_4](start_span)<h2 class="meal-title">REFEIÇÃO 1 - 07:00[span_4](end_span)</h2>
+            <div class="meal-stats">
+                [span_5](start_span)<strong>Calorias: 430kcal[span_5](end_span)</strong>
+                [span_6](start_span)<span>P: 25g[span_6](end_span) | [span_7](start_span)C: 50g[span_7](end_span) | [span_8](start_span)G: 15g[span_8](end_span)</span>
+            </div>
+        </div>
+        <div class="options-grid">
+            <div class="option-box">
+                [span_9](start_span)<h3 class="option-title">Opção 1[span_9](end_span)</h3>
+                <ul>
+                    [span_10](start_span)<li>Pão integral - 2 fatias (140kcal)[span_10](end_span)</li>
+                    [span_11](start_span)<li>Ovos inteiros mexidos - 2 unidades (140kcal)[span_11](end_span)</li>
+                    [span_12](start_span)<li>Banana média - 1 unidade (90kcal)[span_12](end_span)</li>
+                    [span_13](start_span)<li>Manteiga - 1 colher de chá (40kcal)[span_13](end_span)</li>
+                    [span_14](start_span)<li>Pasta de amendoim - 1 colher de sopa (90kcal)[span_14](end_span)</li>
+                    [span_15](start_span)<li>Creatina - 5g (0kcal)[span_15](end_span)</li>
+                </ul>
+            </div>
+            <div class="option-box">
+                [span_16](start_span)<h3 class="option-title">Opção 2[span_16](end_span)</h3>
+                <ul>
+                    [span_17](start_span)<li>Whey protein - 1 scoop com água (120kcal)[span_17](end_span)</li>
+                    [span_18](start_span)<li>Torradas integrais - 2 unidades (140kcal)[span_18](end_span)</li>
+                    [span_19](start_span)<li>Pasta de amendoim - 1 colher de sopa (90kcal)[span_19](end_span)</li>
+                    [span_20](start_span)<li>Banana média - 1 unidade (90kcal)[span_20](end_span)</li>
+                    [span_21](start_span)<li>Creatina - 5g (0kcal)[span_21](end_span)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="meal-card">
+        <div class="meal-header">
+            [span_22](start_span)<h2 class="meal-title">REFEIÇÃO 2 - 11:30[span_22](end_span)</h2>
+            <div class="meal-stats">
+                [span_23](start_span)<strong>Calorias: 660kcal[span_23](end_span)</strong>
+                [span_24](start_span)<span>P: 45g[span_24](end_span) | [span_25](start_span)C: 70g[span_25](end_span) | [span_26](start_span)G: 18g[span_26](end_span)</span>
+            </div>
+        </div>
+        <div class="options-grid">
+            <div class="option-box">
+                [span_27](start_span)<h3 class="option-title">Opção 1[span_27](end_span)</h3>
+                <ul>
+                    [span_28](start_span)<li>Arroz branco cozido - 120g (160kcal)[span_28](end_span)</li>
+                    [span_29](start_span)<li>Peito de frango grelhado - 150g (240kcal)[span_29](end_span)</li>
+                    [span_30](start_span)<li>Batata doce cozida - 100g (80kcal)[span_30](end_span)</li>
+                    [span_31](start_span)<li>Salada de folhas com tomate - 1 prato (20kcal)[span_31](end_span)</li>
+                    [span_32](start_span)<li>Azeite - 1 colher de sopa (90kcal)[span_32](end_span)</li>
+                    [span_33](start_span)<li>Abacaxi - 1 fatia (90kcal)[span_33](end_span)</li>
+                </ul>
+            </div>
+            <div class="option-box">
+                [span_34](start_span)<h3 class="option-title">Opção 2[span_34](end_span)</h3>
+                <ul>
+                    [span_35](start_span)<li>Marmita pronta - arroz, frango e legumes (500kcal)[span_35](end_span)</li>
+                    [span_36](start_span)<li>Azeite extra - 1 colher de sopa (50kcal)[span_36](end_span)</li>
+                    [span_37](start_span)<li>Maçã pequena - 1 unidade (70kcal)[span_37](end_span)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="meal-card">
+        <div class="meal-header">
+            [span_38](start_span)<h2 class="meal-title">REFEIÇÃO 3 - 16:00[span_38](end_span)</h2>
+            <div class="meal-stats">
+                [span_39](start_span)<strong>Calorias: 440kcal[span_39](end_span)</strong>
+                [span_40](start_span)<span>P: 20g[span_40](end_span) | [span_41](start_span)C: 35g[span_41](end_span) | [span_42](start_span)G: 15g[span_42](end_span)</span>
+            </div>
+        </div>
+        <div class="options-grid">
+            <div class="option-box">
+                [span_43](start_span)<h3 class="option-title">Opção 1[span_43](end_span)</h3>
+                <ul>
+                    [span_44](start_span)<li>Whey protein - 1 scoop com água (120kcal)[span_44](end_span)</li>
+                    [span_45](start_span)<li>Pão integral - 2 fatias (140kcal)[span_45](end_span)</li>
+                    [span_46](start_span)<li>Pasta de amendoim - 1 colher de sopa cheia (90kcal)[span_46](end_span)</li>
+                    [span_47](start_span)<li>Banana média - 1 unidade (90kcal)[span_47](end_span)</li>
+                    [span_48](start_span)<li>Castanhas de caju - 5 unidades (40kcal)[span_48](end_span)</li>
+                </ul>
+            </div>
+            <div class="option-box">
+                [span_49](start_span)<h3 class="option-title">Opção 2[span_49](end_span)</h3>
+                <ul>
+                    [span_50](start_span)<li>Iogurte natural integral - 1 pote (100kcal)[span_50](end_span)</li>
+                    [span_51](start_span)<li>Granola - 3 colheres de sopa (180kcal)[span_51](end_span)</li>
+                    [span_52](start_span)<li>Pasta de amendoim - 1 colher de sopa (90kcal)[span_52](end_span)</li>
+                    [span_53](start_span)<li>Mel - 1 colher de chá (30kcal)[span_53](end_span)</li>
+                    [span_54](start_span)<li>Banana pequena - 1 unidade (40kcal)[span_54](end_span)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="meal-card">
+        <div class="meal-header">
+            [span_55](start_span)<h2 class="meal-title">REFEIÇÃO 4 - 20:00[span_55](end_span)</h2>
+            <div class="meal-stats">
+                [span_56](start_span)<strong>Calorias: 530kcal[span_56](end_span)</strong>
+                [span_57](start_span)<span>P: 35g[span_57](end_span) | [span_58](start_span)C: 40g[span_58](end_span) | [span_59](start_span)G: 18g[span_59](end_span)</span>
+            </div>
+        </div>
+        <div class="options-grid">
+            <div class="option-box">
+                [span_60](start_span)<h3 class="option-title">Opção 1[span_60](end_span)</h3>
+                <ul>
+                    [span_61](start_span)<li>Arroz branco cozido - 100g (130kcal)[span_61](end_span)</li>
+                    [span_62](start_span)<li>Carne moída magra refogada - 150g com cebola e alho (260kcal)[span_62](end_span)</li>
+                    [span_63](start_span)<li>Legumes cozidos - cenoura, vagem e abobrinha (60kcal)[span_63](end_span)</li>
+                    [span_64](start_span)<li>Azeite - 1 colher de sopa sobre legumes (80kcal)[span_64](end_span)</li>
+                </ul>
+            </div>
+            <div class="option-box">
+                [span_65](start_span)<h3 class="option-title">Opção 2[span_65](end_span)</h3>
+                <ul>
+                    [span_66](start_span)<li>Omelete - 3 ovos inteiros (210kcal)[span_66](end_span)</li>
+                    [span_67](start_span)<li>Pão integral - 1 fatia (70kcal)[span_67](end_span)</li>
+                    [span_68](start_span)<li>Requeijão light - 1 colher de sopa (30kcal)[span_68](end_span)</li>
+                    [span_69](start_span)<li>Leite desnatado - 1 copo (100kcal)[span_69](end_span)</li>
+                    [span_70](start_span)<li>Legumes cozidos - 1 prato pequeno (90kcal)[span_70](end_span)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        [span_71](start_span)<div class="total-calories">TOTAL DIÁRIO: 2200kcal[span_71](end_span)</div>
+        [span_72](start_span)<p>Gerado pela Plataforma NutriPlan[span_72](end_span) | [span_73](start_span)Data: 07/04/2026[span_73](end_span)</p>
+    </footer>
+</div>
+
+</body>
+</html>
