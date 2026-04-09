@@ -31,8 +31,15 @@
   </button>
   <div class="hero-circles"><span></span><span></span><span></span></div>
   <div class="hero-badge">NutriPlan</div>
+  
   <h1>Plano <em>Alimentar</em></h1>
-  <p class="hero-sub">2.200 KCAL · 4 REFEIÇÕES · META DE COMPOSIÇÃO CORPORAL</p>
+
+  <div class="date-picker">
+    <button class="date-btn" onclick="window.changeDate(-1)">←</button>
+    <span class="date-display" id="date-display">Hoje</span>
+    <button class="date-btn" onclick="window.changeDate(1)">→</button>
+  </div>
+  
   <div class="macro-row">
     <div class="macro-pill"><span class="dot dot-p"></span><strong>165g</strong> Proteínas</div>
     <div class="macro-pill"><span class="dot dot-c"></span><strong>275g</strong> Carboidratos</div>
