@@ -300,6 +300,32 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="water-modal">
+  <div class="modal" style="text-align: center;">
+    <button class="modal-close" onclick="window.closeWaterModal()">✕</button>
+    <h3 style="margin-bottom: 4px;">Hidratação Diária</h3>
+    <p style="color: var(--mid); font-size: 14px; margin-bottom: 24px;">Meta: 3500 ml</p>
+    
+    <div class="water-visual" style="margin: 0 auto 20px; width: 125px; height: 200px; -webkit-mask-size: 100% 100%; mask-size: 100% 100%;">
+      <div class="water-fill" id="water-fill">
+        <div class="water-wave"></div> 
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 24px;">
+      <strong id="water-text" style="color: var(--blue); font-size: 36px; font-family: 'Playfair Display', serif;">0</strong> <span style="font-size: 18px; color: var(--mid);">ml</span>
+      <div id="water-status" style="font-size: 14px; font-weight: 700; margin-top: 8px; min-height: 20px; padding: 6px 12px; border-radius: 12px; display: inline-block; background: var(--light);"></div>
+    </div>
+    
+    <div class="water-controls" style="justify-content: center; gap: 12px;">
+      <input type="number" id="water-amount" class="water-input" value="350" step="50" min="0" style="width: 90px; padding: 12px;">
+      <button class="water-btn" onclick="window.addWater()" style="padding: 12px 20px;">💧 Adicionar</button>
+      <button class="water-btn-undo" onclick="window.undoWater()" title="Desfazer" style="padding: 12px 16px;">↩️</button>
+    </div>
+  </div>
+</div>
+
+
 <header class="hero">
   <button id="btnLogout" class="gen-btn gen-btn-txt" style="position: absolute; top: 20px; right: 20px; z-index: 10;">
     Sair
@@ -357,22 +383,12 @@
     </div>
   </div>
 
-  <div class="water-card">
-    <div class="water-visual">
-      <div class="water-fill" id="water-fill">
-        <div class="water-wave"></div> 
-      </div>
-    </div>
-    <div class="water-info">
-      <h3>Hidratação</h3>
-      <p><strong id="water-text" style="color: var(--blue); font-size: 22px;">0</strong> / 3500 ml</p>
-      
-      <div class="water-controls">
-        <input type="number" id="water-amount" class="water-input" value="350" step="50" min="0">
-        <button class="water-btn" onclick="window.addWater()">💧 Adicionar</button>
-        <button class="water-btn-undo" onclick="window.undoWater()" title="Desfazer">↩️</button>
-      </div>
-    </div>
+    <div style="text-align: center; margin-bottom: 28px;">
+    <button class="action-btn btn-primary" onclick="window.openWaterModal()" style="width: 100%; justify-content: center; padding: 18px; font-size: 16px; border-radius: 20px; box-shadow: 0 8px 24px rgba(45,106,79,.2);">
+      💧 Controle de Hidratação (<span id="water-btn-text">0</span> ml)
+    </button>
+  </div>
+
   </div>
 
   <nav class="nav-tabs">
