@@ -101,23 +101,39 @@ async function loadDataForDate(targetDate) {
     window.eatenG = data.g || 0;
 
     if (data.foods) {
-      document.querySelectorAll('.food-item').forEach(el => {
-        const foodName = el.querySelector('.food-info strong').textContent;
-        if (data.foods.includes(foodName)) {
-          el.classList.add('eaten');
-          window.updateMealProgress(el);
+      // Pega todas as comidas na ordem em que aparecem no HTML
+      const allFoods = Array.from(document.querySelectorAll('.food-item'));
+      
+      data.foods.forEach(item => {
+        // Novo formato seguro: Carrega pela posição exata (número)
+        if (typeof item === 'number' && allFoods[item]) {
+          allFoods[item].classList.add('eaten');
+          window.updateMealProgress(allFoods[item]);
+        } 
+        // Formato antigo (legado): Mantido para não quebrar o que você já salvou hoje
+        else if (typeof item === 'string') {
+          allFoods.forEach(el => {
+            if (el.querySelector('.food-info strong').textContent === item) {
+              el.classList.add('eaten');
+              window.updateMealProgress(el);
+            }
+          });
         }
       });
     }
   }
-  // Sempre atualiza o tracker, mesmo se não existir dados (para ficar zerado)
   window.updateTracker();
 }
 
 window.saveToFirebase = async () => {
   if (!currentUser) return;
-  const eatenElements = document.querySelectorAll('.food-item.eaten .food-info strong');
-  const eatenFoods = Array.from(eatenElements).map(el => el.textContent);
+  
+  const allFoods = Array.from(document.querySelectorAll('.food-item'));
+  
+  // Em vez de salvar nomes, salva a posição exata (índice) das que estão marcadas
+  const eatenIndexes = allFoods
+    .map((el, index) => el.classList.contains('eaten') ? index : -1)
+    .filter(index => index !== -1);
   
   const dateStr = getFormattedDateString(currentViewDate);
   const docRef = doc(db, "users", currentUser.uid, "history", dateStr);
@@ -127,7 +143,7 @@ window.saveToFirebase = async () => {
     p: window.eatenP,
     c: window.eatenC,
     g: window.eatenG,
-    foods: eatenFoods
+    foods: eatenIndexes // Agora salva números como [0, 5, 12]
   }, { merge: true }); 
 };
 
