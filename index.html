@@ -1,93 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NutriPlan — 2200 kcal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-
-<body class="protected-page">
-
-<div id="progress-bar"></div>
-<div class="toast" id="toast"><span id="toast-text"></span></div>
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="window.closeModal()">✕</button>
-    <div class="modal-icon" id="modal-icon">🛒</div>
-    <h3 id="modal-title">Lista Gerada!</h3>
-    <p id="modal-desc">Sua lista de compras está pronta. Escolha como deseja exportar:</p>
-    <div class="modal-actions" id="modal-actions"></div>
-  </div>
-</div>
-
-<header class="hero">
-  <button id="btnLogout" class="gen-btn gen-btn-txt" style="position: absolute; top: 20px; right: 20px; z-index: 10;">
-    Sair
-  </button>
-  <div class="hero-circles"><span></span><span></span><span></span></div>
-  <div class="hero-badge">NutriPlan</div>
-  
-  <h1>Plano <em>Alimentar</em></h1>
-
-  <div class="date-picker">
-    <button class="date-btn" onclick="window.changeDate(-1)">←</button>
-    <span class="date-display" id="date-display">Hoje</span>
-    <button class="date-btn" onclick="window.changeDate(1)">→</button>
-  </div>
-  
-  <div class="macro-row">
-    <div class="macro-pill"><span class="dot dot-p"></span><strong>165g</strong> Proteínas</div>
-    <div class="macro-pill"><span class="dot dot-c"></span><strong>275g</strong> Carboidratos</div>
-    <div class="macro-pill"><span class="dot dot-g"></span><strong>73g</strong> Gorduras</div>
-  </div>
-  <div class="progress-strip"><div class="ps-p"></div><div class="ps-c"></div><div class="ps-g"></div></div>
-</header>
-
-<div class="container">
-
-  <div class="tracker-bar" style="margin-top:36px">
-    <div class="tracker-kcal">
-      <div class="tracker-ring">
-        <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle class="ring-bg" cx="36" cy="36" r="30"/>
-          <circle class="ring-fill" id="kcal-ring" cx="36" cy="36" r="30"/>
-        </svg>
-        <div class="ring-text">
-          <span id="kcal-consumed">0</span>
-          <small>KCAL</small>
-        </div>
-      </div>
-    </div>
-    <div class="tracker-stats">
-      <div class="tracker-stat t-bar-p">
-        <div class="t-val" id="stat-p">0g</div>
-        <div class="t-lbl">Proteínas</div>
-        <div class="t-bar"><div class="t-bar-fill" id="bar-p" style="width:0%"></div></div>
-      </div>
-      <div class="tracker-stat t-bar-c">
-        <div class="t-val" id="stat-c">0g</div>
-        <div class="t-lbl">Carbos</div>
-        <div class="t-bar"><div class="t-bar-fill" id="bar-c" style="width:0%"></div></div>
-      </div>
-      <div class="tracker-stat t-bar-g">
-        <div class="t-val" id="stat-g">0g</div>
-        <div class="t-lbl">Gorduras</div>
-        <div class="t-bar"><div class="t-bar-fill" id="bar-g" style="width:0%"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="window.showPage('diet', this)"><span class="tab-icon">🥗</span> <span>Dieta</span></button>
-    <button class="nav-tab" onclick="window.showPage('shop', this)"><span class="tab-icon">🛒</span> <span>Lista de Compras</span></button>
-  </nav>
-
-  <div class="page-section active" id="page-diet">
+<div class="page-section active" id="page-diet">
 
     <div class="filter-tabs">
       <button class="filter-btn active" onclick="window.filterMeal('all', this)">📋 Todas</button>
@@ -116,37 +27,37 @@
       <div class="food-panel visible" id="meal1-a">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="140" data-p="5" data-c="24" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍞')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1626423641508-c473b1853008?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍞')">
           <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
           <span class="food-kcal">140 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="140" data-p="12" data-c="1" data-g="10">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍳')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍳')">
           <div class="food-info"><strong>Ovos Mexidos</strong><span>2 unidades inteiros</span></div>
           <span class="food-kcal">140 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍌')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250081102-cab0e5cb314c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍌')">
           <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="40" data-p="0" data-c="0" data-g="4">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🧈</div>
+          <img class="food-img" src="https://img.freepik.com/fotos-premium/manteiga-fresca-no-prato-de-manteiga-branco-isolado-no-fundo-branco-com-tracado-de-recorte_625448-423.jpg" alt="" onerror="window.imgFallback(this,'🧈')">
           <div class="food-info"><strong>Manteiga</strong><span>1 colher de chá</span></div>
           <span class="food-kcal">40 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥜</div>
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1701210419456-78f3e42789ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥜')">
           <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="0" data-p="0" data-c="0" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">💊</div>
+          <img class="food-img" src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'💊')">
           <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
           <span class="food-kcal">0 kcal</span>
         </div>
@@ -154,31 +65,31 @@
       <div class="food-panel" id="meal1-b">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="120" data-p="24" data-c="3" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥤</div>
+          <img class="food-img" src="https://images.unsplash.com/photo-1693996046865-19217d179161?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥤')">
           <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
           <span class="food-kcal">120 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="140" data-p="4" data-c="26" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍞')">
+          <img class="food-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi8DgzPWA1TLIDj1be1kFVCPbQtmnl4wzFVA&s" alt="" onerror="window.imgFallback(this,'🍞')">
           <div class="food-info"><strong>Torradas Integrais</strong><span>2 unidades</span></div>
           <span class="food-kcal">140 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥜</div>
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1701210419456-78f3e42789ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥜')">
           <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍌')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250081102-cab0e5cb314c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍌')">
           <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="0" data-p="0" data-c="0" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">💊</div>
+          <img class="food-img" src="https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'💊')">
           <div class="food-info"><strong>Creatina <span class="supp-tag">Suplemento</span></strong><span>5g com água</span></div>
           <span class="food-kcal">0 kcal</span>
         </div>
@@ -204,37 +115,37 @@
       <div class="food-panel visible" id="meal2-a">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="160" data-p="3" data-c="35" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍚')">
+          <img class="food-img" src="https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480/img/recipe/ras/Assets/40002C5B-31DC-4F2F-A9E3-D52169EF04BA/Derivates/427A575D-5B18-45D0-A7BC-7FEA33EABF16.jpg" alt="" onerror="window.imgFallback(this,'🍚')">
           <div class="food-info"><strong>Arroz Branco Cozido</strong><span>120g</span></div>
           <span class="food-kcal">160 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="240" data-p="37" data-c="0" data-g="9">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍗')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1612871689804-26a67131416e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍗')">
           <div class="food-info"><strong>Peito de Frango Grelhado</strong><span>150g</span></div>
           <span class="food-kcal">240 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="80" data-p="1" data-c="19" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍠')">
+          <img class="food-img" src="https://gbarbosa.vtexassets.com/arquivos/ids/210407-800-auto?v=638354955785400000&width=800&height=auto&aspect=true" alt="" onerror="window.imgFallback(this,'🍠')">
           <div class="food-info"><strong>Batata Doce Cozida</strong><span>100g</span></div>
           <span class="food-kcal">80 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="20" data-p="1" data-c="4" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥗')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1622205313162-be1d5712a43f?q=80&w=1031&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥗')">
           <div class="food-info"><strong>Salada de Folhas c/ Tomate</strong><span>1 prato</span></div>
           <span class="food-kcal">20 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="0" data-c="0" data-g="10">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="window.imgFallback(this,'🫒')">
+          <img class="food-img" src="https://img.freepik.com/fotos-premium/frasco-de-vidro-de-azeite-isolado-em-fundo-branco-transparente_771335-64395.jpg?w=360" alt="" onerror="window.imgFallback(this,'🫒')">
           <div class="food-info"><strong>Azeite Extra Virgem</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="1" data-c="22" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍍')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724255994628-dceb76a829e8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍍')">
           <div class="food-info"><strong>Abacaxi</strong><span>1 fatia</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
@@ -248,13 +159,13 @@
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="50" data-p="0" data-c="0" data-g="6">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="window.imgFallback(this,'🫒')">
+          <img class="food-img" src="https://img.freepik.com/fotos-premium/frasco-de-vidro-de-azeite-isolado-em-fundo-branco-transparente_771335-64395.jpg?w=360" alt="" onerror="window.imgFallback(this,'🫒')">
           <div class="food-info"><strong>Azeite Extra</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">50 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="70" data-p="0" data-c="18" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍎')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724249990837-f6dfcb7f3eaa?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍎')">
           <div class="food-info"><strong>Maçã Pequena</strong><span>1 unidade</span></div>
           <span class="food-kcal">70 kcal</span>
         </div>
@@ -280,31 +191,31 @@
       <div class="food-panel visible" id="meal3-a">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="120" data-p="24" data-c="3" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥤</div>
+          <img class="food-img" src="https://images.unsplash.com/photo-1693996046865-19217d179161?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥤')">
           <div class="food-info"><strong>Whey Protein <span class="supp-tag">Suplemento</span></strong><span>1 scoop com água</span></div>
           <span class="food-kcal">120 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="140" data-p="5" data-c="24" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍞')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1626423641508-c473b1853008?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍞')">
           <div class="food-info"><strong>Pão Integral</strong><span>2 fatias</span></div>
           <span class="food-kcal">140 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥜</div>
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1701210419456-78f3e42789ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥜')">
           <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa cheia</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="1" data-c="23" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍌')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250081102-cab0e5cb314c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍌')">
           <div class="food-info"><strong>Banana Média</strong><span>1 unidade</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="40" data-p="1" data-c="2" data-g="3">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥜')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1615485925873-7ecbbe90a866?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥜')">
           <div class="food-info"><strong>Castanhas de Caju</strong><span>5 unidades</span></div>
           <span class="food-kcal">40 kcal</span>
         </div>
@@ -312,31 +223,31 @@
       <div class="food-panel" id="meal3-b">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="100" data-p="6" data-c="8" data-g="5">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥛')">
+          <img class="food-img" src="https://receitadaboa.com.br/wp-content/uploads/2024/09/iogurte-.jpg" alt="" onerror="window.imgFallback(this,'🥛')">
           <div class="food-info"><strong>Iogurte Natural Integral</strong><span>1 pote</span></div>
           <span class="food-kcal">100 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="180" data-p="4" data-c="28" data-g="7">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1584806749948-697891c67821?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥣')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1724441980123-aca7911329d0?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥣')">
           <div class="food-info"><strong>Granola</strong><span>3 colheres de sopa</span></div>
           <span class="food-kcal">180 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="4" data-c="3" data-g="8">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🥜</div>
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1701210419456-78f3e42789ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥜')">
           <div class="food-info"><strong>Pasta de Amendoim</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="30" data-p="0" data-c="8" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍯')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍯')">
           <div class="food-info"><strong>Mel</strong><span>1 colher de chá</span></div>
           <span class="food-kcal">30 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="40" data-p="0" data-c="10" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍌')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250081102-cab0e5cb314c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍌')">
           <div class="food-info"><strong>Banana Pequena</strong><span>1 unidade</span></div>
           <span class="food-kcal">40 kcal</span>
         </div>
@@ -362,25 +273,25 @@
       <div class="food-panel visible" id="meal4-a">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="130" data-p="2" data-c="29" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1516684732162-798a0062be99?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍚')">
+          <img class="food-img" src="https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480/img/recipe/ras/Assets/40002C5B-31DC-4F2F-A9E3-D52169EF04BA/Derivates/427A575D-5B18-45D0-A7BC-7FEA33EABF16.jpg" alt="" onerror="window.imgFallback(this,'🍚')">
           <div class="food-info"><strong>Arroz Branco Cozido</strong><span>100g</span></div>
           <span class="food-kcal">130 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="260" data-p="28" data-c="4" data-g="14">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥩')">
+          <img class="food-img" src="https://rotinacozinha.com/cdn/shop/products/WhatsAppImage2023-04-17at8.40.39PM.jpg?v=1681775287" alt="" onerror="window.imgFallback(this,'🥩')">
           <div class="food-info"><strong>Carne Moída Magra Refogada</strong><span>150g com cebola e alho</span></div>
           <span class="food-kcal">260 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="60" data-p="2" data-c="12" data-g="0">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥕')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250196974-5be388b60d0b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥕')">
           <div class="food-info"><strong>Legumes Cozidos</strong><span>Cenoura, vagem e abobrinha</span></div>
           <span class="food-kcal">60 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="80" data-p="0" data-c="0" data-g="9">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200&q=80" alt="" onerror="window.imgFallback(this,'🫒')">
+          <img class="food-img" src="https://img.freepik.com/fotos-premium/frasco-de-vidro-de-azeite-isolado-em-fundo-branco-transparente_771335-64395.jpg?w=360" alt="" onerror="window.imgFallback(this,'🫒')">
           <div class="food-info"><strong>Azeite</strong><span>1 colher de sopa sobre legumes</span></div>
           <span class="food-kcal">80 kcal</span>
         </div>
@@ -388,31 +299,31 @@
       <div class="food-panel" id="meal4-b">
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="210" data-p="18" data-c="1" data-g="15">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍳')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍳')">
           <div class="food-info"><strong>Omelete</strong><span>3 ovos inteiros</span></div>
           <span class="food-kcal">210 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="70" data-p="2" data-c="12" data-g="1">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt="" onerror="window.imgFallback(this,'🍞')">
+          <img class="food-img" src="https://images.unsplash.com/photo-1626423641508-c473b1853008?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🍞')">
           <div class="food-info"><strong>Pão Integral</strong><span>1 fatia</span></div>
           <span class="food-kcal">70 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="30" data-p="1" data-c="2" data-g="2">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <div class="food-img-placeholder">🧀</div>
+          <img class="food-img" src="https://prod-zapt-images.s3.sa-east-1.amazonaws.com/products/561014a2-960c-402e-9aba-1aa80f168aec.png" alt="" onerror="window.imgFallback(this,'🧀')">
           <div class="food-info"><strong>Requeijão Light</strong><span>1 colher de sopa</span></div>
           <span class="food-kcal">30 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="100" data-p="10" data-c="12" data-g="1">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥛')">
+          <img class="food-img" src="https://receitanatureba.com/wp-content/uploads/2018/01/Kefir-com-Leite-Desnatado.jpg" alt="" onerror="window.imgFallback(this,'🥛')">
           <div class="food-info"><strong>Leite Desnatado</strong><span>1 copo</span></div>
           <span class="food-kcal">100 kcal</span>
         </div>
         <div class="food-item" onclick="window.toggleFood(this)" data-kcal="90" data-p="3" data-c="18" data-g="1">
           <div class="food-checkbox"><svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
-          <img class="food-img" src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&q=80" alt="" onerror="window.imgFallback(this,'🥕')">
+          <img class="food-img" src="https://plus.unsplash.com/premium_photo-1724250196974-5be388b60d0b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" onerror="window.imgFallback(this,'🥕')">
           <div class="food-info"><strong>Legumes Cozidos</strong><span>1 prato pequeno</span></div>
           <span class="food-kcal">90 kcal</span>
         </div>
@@ -434,51 +345,4 @@
       <button class="action-btn btn-outline" onclick="window.copyPlan()">📋 Copiar Resumo</button>
     </div>
 
-  </div><div class="page-section" id="page-shop">
-
-    <div class="shop-header">
-      <div class="shop-icon-big">🛒</div>
-      <div class="shop-header-text">
-        <h2>Lista de Compras</h2>
-        <p>Selecione os itens que deseja incluir e gere sua lista personalizada</p>
-      </div>
-      <div class="shop-count-badge" id="shop-count-badge">0 selecionados</div>
-    </div>
-
-    <div class="shop-controls">
-      <button class="shop-ctrl-btn" onclick="window.selectAllShop()">✓ Selecionar Todos</button>
-      <button class="shop-ctrl-btn" onclick="window.selectNoneShop()">✕ Limpar Seleção</button>
-      <button class="shop-ctrl-btn" onclick="window.selectFromDiet()">🥗 Do Plano Alimentar</button>
-      <input type="text" class="shop-search" placeholder="🔍 Buscar item..." id="shop-search-input" oninput="window.filterShopItems()">
-    </div>
-
-    <div id="shop-list-container"></div>
-
-    <div class="generate-panel">
-      <div class="generate-card">
-        <div class="generate-info">
-          <strong id="gen-label">0 itens selecionados</strong>
-          <span>Escolha o formato de exportação</span>
-        </div>
-        <div class="generate-btns">
-          <button class="gen-btn gen-btn-pdf" onclick="window.generateShoppingList('pdf')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Gerar PDF
-          </button>
-          <button class="gen-btn gen-btn-txt" onclick="window.generateShoppingList('txt')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copiar TXT
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </div></div><footer>
-  <p>Gerado pela <strong>NutriPlan</strong></p>
-  <p style="margin-top:6px;font-size:12px;opacity:.7">Este plano é informativo. Consulte sempre um nutricionista.</p>
-</footer>
-
-<script type="module" src="js/app.js"></script>
-
-</body>
-</html>
+  </div>```
