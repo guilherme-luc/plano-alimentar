@@ -345,4 +345,51 @@
       <button class="action-btn btn-outline" onclick="window.copyPlan()">📋 Copiar Resumo</button>
     </div>
 
-  </div>```
+  </div><div class="page-section" id="page-shop">
+
+    <div class="shop-header">
+      <div class="shop-icon-big">🛒</div>
+      <div class="shop-header-text">
+        <h2>Lista de Compras</h2>
+        <p>Selecione os itens que deseja incluir e gere sua lista personalizada</p>
+      </div>
+      <div class="shop-count-badge" id="shop-count-badge">0 selecionados</div>
+    </div>
+
+    <div class="shop-controls">
+      <button class="shop-ctrl-btn" onclick="window.selectAllShop()">✓ Selecionar Todos</button>
+      <button class="shop-ctrl-btn" onclick="window.selectNoneShop()">✕ Limpar Seleção</button>
+      <button class="shop-ctrl-btn" onclick="window.selectFromDiet()">🥗 Do Plano Alimentar</button>
+      <input type="text" class="shop-search" placeholder="🔍 Buscar item..." id="shop-search-input" oninput="window.filterShopItems()">
+    </div>
+
+    <div id="shop-list-container"></div>
+
+    <div class="generate-panel">
+      <div class="generate-card">
+        <div class="generate-info">
+          <strong id="gen-label">0 itens selecionados</strong>
+          <span>Escolha o formato de exportação</span>
+        </div>
+        <div class="generate-btns">
+          <button class="gen-btn gen-btn-pdf" onclick="window.generateShoppingList('pdf')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Gerar PDF
+          </button>
+          <button class="gen-btn gen-btn-txt" onclick="window.generateShoppingList('txt')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copiar TXT
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div></div><footer>
+  <p>Gerado pela <strong>NutriPlan</strong></p>
+  <p style="margin-top:6px;font-size:12px;opacity:.7">Este plano é informativo. Consulte sempre um nutricionista.</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
