@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriPlan — 2200 kcal</title>
+    <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1B2B1F">
+  <link rel="apple-touch-icon" href="./icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
   
@@ -774,6 +777,16 @@
 </footer>
 
 <script type="module" src="js/app.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('PWA: Service Worker ativado!'))
+        .catch((err) => console.log('PWA: Erro no Service Worker', err));
+    });
+  }
+</script>
 
 </body>
 </html>
