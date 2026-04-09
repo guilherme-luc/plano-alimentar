@@ -1442,7 +1442,7 @@ const SHOP_DATA = {
    STATE
 ═══════════════════════════════════════════════════ */
 let selectedShopItems = new Set();
-let eatenKcal = 0, eatenP = 0, eatenC = 0, eatenG = 0;
+var eatenKcal = 0, eatenP = 0, eatenC = 0, eatenG = 0;
 const TOTAL_KCAL = 2200, TOTAL_P = 165, TOTAL_C = 275, TOTAL_G = 73;
 const MEAL_KCAL = { 1: 430, 2: 660, 3: 440, 4: 530 };
 
@@ -1765,6 +1765,7 @@ function toggleFood(el) {
   const p = parseInt(el.dataset.p) || 0;
   const c = parseInt(el.dataset.c) || 0;
   const g = parseInt(el.dataset.g) || 0;
+  
   if (!wasEaten) {
     eatenKcal += kcal; eatenP += p; eatenC += c; eatenG += g;
     const msgs = ['Boa! 💪', 'Foco total!', 'Na dieta! 🥗', 'Registrado! ✅'];
@@ -1772,8 +1773,11 @@ function toggleFood(el) {
   } else {
     eatenKcal -= kcal; eatenP -= p; eatenC -= c; eatenG -= g;
   }
+  
   updateTracker();
   updateMealProgress(el);
+  
+  if (window.saveToFirebase) window.saveToFirebase();
 }
 
 function updateTracker() {
