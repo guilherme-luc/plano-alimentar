@@ -248,11 +248,21 @@
       .generate-btns { width: 100%; }
       .gen-btn { flex: 1; justify-content: center; }
     }
-    /* ─── RASTREADOR DE ÁGUA ─── */
-.water-card { background: var(--white); border-radius: 24px; padding: 24px; margin-bottom: 28px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.water-visual { 
-  position: relative; width: 64px; height: 160px; background: var(--green-xl); flex-shrink: 0;
-  /* Chama a imagem que você salvou no GitHub */
+    /* ─── RASTREADOR DE ÁGUA (NOVO LAYOUT LADO A LADO) ─── */
+.water-modal-container { max-width: 500px; padding: 40px 30px; }
+.water-layout { display: flex; gap: 32px; align-items: stretch; }
+
+/* Lado Esquerdo - Visual e Linhas */
+.water-left { position: relative; flex: 0 0 120px; height: 280px; display: flex; justify-content: center; margin-left: 25px; } /* Aumentei um pouco a margem para caber o número */
+.water-markers { position: absolute; inset: 0; pointer-events: none; z-index: 0; width: 100%; left: 0; }
+.marker { position: absolute; left: 0; right: 0; border-top: 1px solid #cbd5e1; } /* Linha um pouquinho mais escura para aparecer melhor */
+.marker span { position: absolute; left: -35px; top: -8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #64748b; background: transparent; padding: 0; } /* Tirei o fundo branco, deixei a cor e a fonte mais neutras */
+/* Silhueta Ajustada */
+.water-visual-large { 
+  position: relative; 
+  width: 90px; 
+  height: 280px; /* Altura maior corrige o corpo "achatado" */
+  background: #e2e8f0; /* Novo fundo Cinza Claro */
   -webkit-mask-image: url("./corpo.png");
   -webkit-mask-size: contain; 
   -webkit-mask-position: bottom center; 
@@ -261,29 +271,34 @@
   mask-size: contain; 
   mask-position: bottom center; 
   mask-repeat: no-repeat;
+  z-index: 1;
 }
+.water-fill-large { position: absolute; bottom: 0; left: 0; right: 0; background: var(--blue); height: 0%; transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.water-wave-large { position: absolute; top: -8px; left: 0; width: 200%; height: 8px; background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 10' xmlns='http://www.w3.org/2000/svg'><path d='M0 10 V5 Q25 -5 50 5 T100 5 V10' fill='%23457B9D'/></svg>") repeat-x; background-size: 50px 10px; animation: waveFlow 1.5s linear infinite; }
 
-.water-fill { 
-  position: absolute; bottom: 0; left: 0; right: 0; background: #457B9D; height: 0%; 
-  transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
-}
-.water-wave { 
-  position: absolute; top: -8px; left: 0; width: 200%; height: 8px; 
-  background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 10' xmlns='http://www.w3.org/2000/svg'><path d='M0 10 V5 Q25 -5 50 5 T100 5 V10' fill='%23457B9D'/></svg>") repeat-x; 
-  background-size: 50px 10px; animation: waveFlow 1.5s linear infinite; 
-}
-@keyframes waveFlow { 0% { transform: translateX(0); } 100% { transform: translateX(-50px); } }
+/* Lado Direito - Controles com fontes simples */
+.water-right { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.water-title { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+.water-display { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+.water-current { font-family: 'DM Sans', sans-serif; font-size: 42px; font-weight: 700; color: var(--blue); line-height: 1; }
+.water-total { font-size: 16px; font-weight: 600; color: var(--mid); }
+.water-status-badge { font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 8px; background: var(--light); color: var(--mid); align-self: flex-start; margin-bottom: 28px; }
 
-.water-info { flex: 1; }
-.water-info h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark); margin-bottom: 2px; }
-.water-info p { font-size: 13px; color: var(--mid); margin-bottom: 16px; font-weight: 500;}
-.water-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.water-input { width: 80px; padding: 10px; border-radius: 12px; border: 2px solid var(--light); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; text-align: center; color: var(--blue); outline: none; }
-.water-input:focus { border-color: var(--blue); }
-.water-btn { background: var(--blue); color: white; border: none; border-radius: 12px; padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(69,123,157,.25); }
-.water-btn:hover { background: #34607D; transform: translateY(-2px); }
-.water-btn-undo { background: var(--light); color: var(--mid); padding: 10px 14px; border-radius: 12px; border: none; font-size: 14px; cursor: pointer; transition: 0.2s; }
-.water-btn-undo:hover { background: #e2e8f0; color: var(--red); }
+.water-inputs { display: flex; flex-direction: column; gap: 10px; }
+.water-input-large { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--light); font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; text-align: center; color: var(--dark); outline: none; transition: 0.2s; }
+.water-input-large:focus { border-color: var(--blue); }
+.water-btn-large { width: 100%; background: var(--blue); color: white; border: none; border-radius: 12px; padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(69,123,157,.25); }
+.water-btn-large:hover { background: #34607D; transform: translateY(-2px); }
+.water-btn-undo-large { width: 100%; background: var(--light); color: var(--mid); border: none; border-radius: 12px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.water-btn-undo-large:hover { background: #e2e8f0; color: var(--dark); }
+
+/* Responsividade: Aperta os itens se a tela do celular for muito estreita */
+@media (max-width: 400px) {
+  .water-layout { flex-direction: row; gap: 20px; }
+  .water-left { flex: 0 0 100px; height: 240px; margin-left: 15px; }
+  .water-current { font-size: 36px; }
+  .water-modal-container { padding: 30px 20px; }
+}
   </style>
 </head>
 
@@ -302,26 +317,42 @@
 </div>
 
 <div class="modal-overlay" id="water-modal">
-  <div class="modal" style="text-align: center;">
+  <div class="modal water-modal-container">
     <button class="modal-close" onclick="window.closeWaterModal()">✕</button>
-    <h3 style="margin-bottom: 4px;">Hidratação Diária</h3>
-    <p style="color: var(--mid); font-size: 14px; margin-bottom: 24px;">Meta: 3500 ml</p>
     
-    <div class="water-visual" style="margin: 0 auto 20px; width: 125px; height: 200px; -webkit-mask-size: 100% 100%; mask-size: 100% 100%;">
-      <div class="water-fill" id="water-fill">
-        <div class="water-wave"></div> 
+    <div class="water-layout">
+      <div class="water-left">
+        <div class="water-markers">
+          <div class="marker" style="top: 0%;"><span>100%</span></div>
+          <div class="marker" style="top: 25%;"><span>75%</span></div>
+          <div class="marker" style="top: 50%;"><span>50%</span></div>
+          <div class="marker" style="top: 75%;"><span>25%</span></div>
+          <div class="marker" style="top: 100%;"><span>0%</span></div>
+        </div>
+        
+        <div class="water-visual-large">
+          <div class="water-fill-large" id="water-fill">
+            <div class="water-wave-large"></div> 
+          </div>
+        </div>
       </div>
-    </div>
-    
-    <div style="margin-bottom: 24px;">
-      <strong id="water-text" style="color: var(--blue); font-size: 36px; font-family: 'Playfair Display', serif;">0</strong> <span style="font-size: 18px; color: var(--mid);">ml</span>
-      <div id="water-status" style="font-size: 14px; font-weight: 700; margin-top: 8px; min-height: 20px; padding: 6px 12px; border-radius: 12px; display: inline-block; background: var(--light);"></div>
-    </div>
-    
-    <div class="water-controls" style="justify-content: center; gap: 12px;">
-      <input type="number" id="water-amount" class="water-input" value="350" step="50" min="0" style="width: 90px; padding: 12px;">
-      <button class="water-btn" onclick="window.addWater()" style="padding: 12px 20px;">💧 Adicionar</button>
-      <button class="water-btn-undo" onclick="window.undoWater()" title="Desfazer" style="padding: 12px 16px;">↩️</button>
+
+      <div class="water-right">
+        <h3 class="water-title">Hidratação</h3>
+        
+        <div class="water-display">
+          <span class="water-current" id="water-text">0</span>
+          <span class="water-total">/ 3500 ml</span>
+        </div>
+        
+        <div id="water-status" class="water-status-badge"></div>
+        
+        <div class="water-inputs">
+          <input type="number" id="water-amount" class="water-input-large" value="350" step="50" min="0">
+          <button class="water-btn-large" onclick="window.addWater()">💧 Adicionar</button>
+          <button class="water-btn-undo-large" onclick="window.undoWater()" title="Desfazer">↩️ Desfazer último</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
