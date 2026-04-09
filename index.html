@@ -248,12 +248,16 @@
     /* ─── RASTREADOR DE ÁGUA ─── */
 .water-card { background: var(--white); border-radius: 24px; padding: 24px; margin-bottom: 28px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 .water-visual { 
-  position: relative; width: 64px; height: 140px; background: var(--green-xl); border-radius: 8px; flex-shrink: 0;
-  /* A máscara em formato de corpo humano usando SVG */
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM8 22V15H6V9C6 7.3 7.3 6 9 6H15C16.7 6 18 7.3 18 9V15H16V22H8Z'/></svg>");
-  -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
-  mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M12 2C10.9 2 10 2.9 10 4C10 5.1 10.9 6 12 6C13.1 6 14 5.1 14 4C14 2.9 13.1 2 12 2ZM8 22V15H6V9C6 7.3 7.3 6 9 6H15C16.7 6 18 7.3 18 9V15H16V22H8Z'/></svg>");
-  mask-size: 100% 100%; mask-repeat: no-repeat;
+  position: relative; width: 64px; height: 160px; background: var(--green-xl); flex-shrink: 0;
+  /* Nova silhueta de corpo inteiro de pé (Sólida) */
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 320 512' xmlns='http://www.w3.org/2000/svg'><path d='M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z'/></svg>");
+  -webkit-mask-size: contain; 
+  -webkit-mask-position: bottom center; 
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 320 512' xmlns='http://www.w3.org/2000/svg'><path d='M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z'/></svg>");
+  mask-size: contain; 
+  mask-position: bottom center; 
+  mask-repeat: no-repeat;
 }
 .water-fill { 
   position: absolute; bottom: 0; left: 0; right: 0; background: #457B9D; height: 0%; 
