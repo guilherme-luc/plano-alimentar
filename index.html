@@ -252,29 +252,42 @@
 .water-modal-container { max-width: 500px; padding: 40px 30px; }
 .water-layout { display: flex; gap: 32px; align-items: stretch; }
 
-/* Lado Esquerdo - Visual e Linhas */
-.water-left { position: relative; flex: 0 0 120px; height: 280px; display: flex; justify-content: center; margin-left: 25px; } /* Aumentei um pouco a margem para caber o número */
+/* Lado Esquerdo - Visual e Linhas (Aumentamos a altura para 320px) */
+.water-left { position: relative; flex: 0 0 140px; height: 320px; display: flex; justify-content: center; margin-left: 25px; } 
 .water-markers { position: absolute; inset: 0; pointer-events: none; z-index: 0; width: 100%; left: 0; }
-.marker { position: absolute; left: 0; right: 0; border-top: 1px solid #cbd5e1; } /* Linha um pouquinho mais escura para aparecer melhor */
-.marker span { position: absolute; left: -35px; top: -8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #64748b; background: transparent; padding: 0; } /* Tirei o fundo branco, deixei a cor e a fonte mais neutras */
-/* Silhueta Ajustada */
+.marker { position: absolute; left: 0; right: 0; border-top: 1px solid #cbd5e1; } 
+.marker span { position: absolute; left: -35px; top: -8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #64748b; background: transparent; padding: 0; } 
+
+/* Silhueta Maior e Cravada nos 100% (Usando SVG embutido em vez do arquivo .png) */
 .water-visual-large { 
   position: relative; 
-  width: 90px; 
-  height: 280px; /* Altura maior corrige o corpo "achatado" */
-  background: #e2e8f0; /* Novo fundo Cinza Claro */
-  -webkit-mask-image: url("./corpo.png");
-  -webkit-mask-size: contain; 
-  -webkit-mask-position: bottom center; 
+  width: 110px; 
+  height: 100%; 
+  background: #e2e8f0; 
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%; 
+  -webkit-mask-position: center; 
   -webkit-mask-repeat: no-repeat;
-  mask-image: url("./corpo.png");
-  mask-size: contain; 
-  mask-position: bottom center; 
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%; 
+  mask-position: center; 
   mask-repeat: no-repeat;
   z-index: 1;
 }
+
 .water-fill-large { position: absolute; bottom: 0; left: 0; right: 0; background: var(--blue); height: 0%; transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.water-wave-large { position: absolute; top: -8px; left: 0; width: 200%; height: 8px; background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 100 10' xmlns='http://www.w3.org/2000/svg'><path d='M0 10 V5 Q25 -5 50 5 T100 5 V10' fill='%23457B9D'/></svg>") repeat-x; background-size: 50px 10px; animation: waveFlow 1.5s linear infinite; }
+
+/* Ondas Mais Altas e Evidentes */
+.water-wave-large { 
+  position: absolute; 
+  top: -12px; 
+  left: 0; 
+  width: 200%; 
+  height: 14px; 
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 12 V6 Q25 -4 50 6 T100 6 V12' fill='%23457B9D'/%3E%3C/svg%3E") repeat-x; 
+  background-size: 50px 12px; 
+  animation: waveFlow 1s linear infinite; 
+}
 
 /* Lado Direito - Controles com fontes simples */
 .water-right { flex: 1; display: flex; flex-direction: column; justify-content: center; }
@@ -292,10 +305,10 @@
 .water-btn-undo-large { width: 100%; background: var(--light); color: var(--mid); border: none; border-radius: 12px; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .water-btn-undo-large:hover { background: #e2e8f0; color: var(--dark); }
 
-/* Responsividade: Aperta os itens se a tela do celular for muito estreita */
+/* Ajuste para telas pequenas */
 @media (max-width: 400px) {
   .water-layout { flex-direction: row; gap: 20px; }
-  .water-left { flex: 0 0 100px; height: 240px; margin-left: 15px; }
+  .water-left { flex: 0 0 110px; height: 260px; margin-left: 15px; }
   .water-current { font-size: 36px; }
   .water-modal-container { padding: 30px 20px; }
 }
