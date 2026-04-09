@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriPlan — Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
 
+  <div class="tracker-bar" style="flex-direction: column; width: 100%; max-width: 360px; text-align: center; gap: 24px; padding: 40px 24px;">
+    
+    <div>
+      <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: var(--green);">NutriPlan</h1>
+      <p style="font-size: 14px; color: var(--mid); margin-top: 8px;">Acesse para salvar seus macros e histórico diário.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+      <input type="email" id="email" placeholder="Seu e-mail" style="padding: 14px; border-radius: 12px; border: 2px solid var(--light); font-family: inherit; font-size: 14px; outline: none;">
+      <input type="password" id="password" placeholder="Sua senha" style="padding: 14px; border-radius: 12px; border: 2px solid var(--light); font-family: inherit; font-size: 14px; outline: none;">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+      <button id="btnLogin" class="action-btn btn-primary" style="width: 100%; justify-content: center;">Entrar</button>
+      <button id="btnRegister" class="action-btn btn-outline" style="width: 100%; justify-content: center;">Criar Nova Conta</button>
+    </div>
+
+    <div id="auth-error" style="color: var(--red); font-size: 13px; font-weight: 600; min-height: 20px;"></div>
+  </div>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/auth.js"></script>
+
+</body>
+</html>
