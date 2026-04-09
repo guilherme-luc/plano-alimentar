@@ -407,15 +407,49 @@ window.undoWater = () => {
   window.saveToFirebase();
 };
 
+window.openWaterModal = () => {
+  document.getElementById('water-modal').classList.add('open');
+  window.updateWaterUI();
+};
+
+window.closeWaterModal = () => {
+  document.getElementById('water-modal').classList.remove('open');
+};
+
 window.updateWaterUI = () => {
   const fillEl = document.getElementById('water-fill');
   const textEl = document.getElementById('water-text');
+  const btnTextEl = document.getElementById('water-btn-text');
+  const statusEl = document.getElementById('water-status');
+  
   if (!fillEl || !textEl) return;
 
-  // Atualiza o texto
+  // Atualiza os textos com a quantidade bebida
   textEl.textContent = window.waterConsumed;
+  if (btnTextEl) btnTextEl.textContent = window.waterConsumed;
 
-  // Calcula a porcentagem para encher o corpinho (trava em 100% visualmente para não vazar a água)
-  const pct = Math.min((window.waterConsumed / WATER_GOAL) * 100, 100);
-  fillEl.style.height = pct + '%';
+  // A matemática perfeita para o preenchimento e para as metas
+  const pct = (window.waterConsumed / WATER_GOAL) * 100;
+  const visualPct = Math.min(pct, 100); // Trava a água visualmente em 100% para não vazar pela cabeça
+  
+  fillEl.style.height = visualPct + '%';
+
+  // Lógica inteligente de status e avisos
+  if (pct >= 100) {
+    const excess = (pct - 100).toFixed(0);
+    if (excess > 0) {
+      statusEl.style.color = 'var(--amber)';
+      statusEl.style.background = '#FFF7ED';
+      statusEl.innerHTML = `Meta atingida! 🎉 (+${excess}% excedido)`;
+    } else {
+      statusEl.style.color = 'var(--green)';
+      statusEl.style.background = 'var(--green-xl)';
+      statusEl.innerHTML = `Meta atingida perfeitamente! 🎉`;
+    }
+  } else {
+    statusEl.style.color = 'var(--mid)';
+    statusEl.style.background = 'var(--light)';
+    statusEl.innerHTML = `Faltam ${WATER_GOAL - window.waterConsumed} ml`;
+  }
 };
+
