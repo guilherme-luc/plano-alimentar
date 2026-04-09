@@ -1,68 +1,42 @@
-// Importamos o 'auth' que você configurou no firebase.js
 import { auth } from './firebase.js';
-// Importamos as funções de login e cadastro direto do Google
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+// Importamos o provedor do Google e a função de Popup
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
-// Pegando os elementos da tela
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const btnLogin = document.getElementById('btnLogin');
-const btnRegister = document.getElementById('btnRegister');
+const btnGoogleLogin = document.getElementById('btnGoogleLogin');
 const errorDiv = document.getElementById('auth-error');
 
-// Função rápida para mostrar mensagens de erro na tela
-const showError = (msg) => {
-  errorDiv.textContent = msg;
-  setTimeout(() => { errorDiv.textContent = ""; }, 4000); // Some após 4 segundos
-};
+// Instancia o Provedor do Google
+const provider = new GoogleAuthProvider();
 
-// ─── LÓGICA DE LOGIN ───
-btnLogin.addEventListener('click', async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  if (!email || !password) {
-    return showError("Por favor, preencha e-mail e senha.");
-  }
-
-  try {
-    btnLogin.textContent = "Entrando..."; // Dá um feedback visual
-    // Tenta fazer o login no Firebase
-    await signInWithEmailAndPassword(auth, email, password);
-    // Se passar da linha acima, deu certo! Redireciona para a dieta:
-    window.location.href = "index.html"; 
-  } catch (error) {
-    btnLogin.textContent = "Entrar";
-    console.error(error);
-    // Traduzindo os erros mais comuns
-    if (error.code === 'auth/invalid-credential') showError("E-mail ou senha incorretos.");
-    else showError("Erro ao entrar. Tente novamente.");
-  }
+// Opcional: Força a conta do usuário a escolher o e-mail, útil se tiver várias contas
+provider.setCustomParameters({
+  prompt: 'select_account'
 });
 
-// ─── LÓGICA DE CADASTRO ───
-btnRegister.addEventListener('click', async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  if (!email || !password) {
-    return showError("Por favor, preencha e-mail e senha.");
-  }
-  
-  if (password.length < 6) {
-    return showError("A senha deve ter pelo menos 6 caracteres.");
-  }
-
+btnGoogleLogin.addEventListener('click', async () => {
   try {
-    btnRegister.textContent = "Criando...";
-    // Cria a conta no Firebase (e já faz o login automático)
-    await createUserWithEmailAndPassword(auth, email, password);
-    // Redireciona para a dieta
+    // Muda o texto para dar feedback
+    const originalText = btnGoogleLogin.innerHTML;
+    btnGoogleLogin.innerHTML = 'Conectando...';
+    
+    // Abre o Pop-up de login do Google
+    const result = await signInWithPopup(auth, provider);
+    
+    // Se passar daqui, o usuário logou com sucesso
+    const user = result.user;
+    console.log("Logado como:", user.displayName);
+    
+    // Redireciona para o app
     window.location.href = "index.html";
+
   } catch (error) {
-    btnRegister.textContent = "Criar Nova Conta";
-    console.error(error);
-    if (error.code === 'auth/email-already-in-use') showError("Este e-mail já está em uso.");
-    else showError("Erro ao criar conta.");
+    console.error("Erro no login:", error);
+    btnGoogleLogin.innerHTML = 'Continuar com o Google'; // Restaura o botão
+    
+    // Mostra erro caso o usuário feche a janela sem logar
+    if (error.code !== 'auth/popup-closed-by-user') {
+       errorDiv.textContent = "Não foi possível concluir o login. Tente novamente.";
+       setTimeout(() => { errorDiv.textContent = ""; }, 4000);
+    }
   }
 });
