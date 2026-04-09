@@ -11,6 +11,11 @@ today.setHours(0, 0, 0, 0);
 // Esta é a data que o usuário está visualizando na tela (pode ser o passado)
 let currentViewDate = new Date(today);
 
+// === COLE AQUI ===
+window.waterConsumed = 0;
+const WATER_GOAL = 3500;
+// =================
+
 // ─── PROTEÇÃO DE ROTA E BANCO DE DADOS ───
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -144,7 +149,7 @@ window.saveToFirebase = async () => {
     p: window.eatenP,
     c: window.eatenC,
     g: window.eatenG,
-    foods: eatenIndexes // Agora salva números como [0, 5, 12]
+    foods: eatenIndexes, // Agora salva números como [0, 5, 12]
     water: window.waterConsumed // NOVA LINHA
   }, { merge: true }); 
 };
