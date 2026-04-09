@@ -99,6 +99,7 @@ async function loadDataForDate(targetDate) {
     window.eatenP = data.p || 0;
     window.eatenC = data.c || 0;
     window.eatenG = data.g || 0;
+    window.waterConsumed = data.water || 0; // NOVA LINHA
 
     if (data.foods) {
       // Pega todas as comidas na ordem em que aparecem no HTML
@@ -144,6 +145,7 @@ window.saveToFirebase = async () => {
     c: window.eatenC,
     g: window.eatenG,
     foods: eatenIndexes // Agora salva números como [0, 5, 12]
+    water: window.waterConsumed // NOVA LINHA
   }, { merge: true }); 
 };
 
@@ -374,3 +376,41 @@ document.addEventListener('DOMContentLoaded', () => {
   buildShopList();
   document.querySelectorAll('.meal-card').forEach((c, i) => c.style.animationDelay = (i * 0.08) + 's');
 });
+
+// Garante que a água zere ao mudar de dia no calendário
+const originalResetUI = resetUI;
+resetUI = function() {
+  originalResetUI();
+  window.waterConsumed = 0;
+  window.updateWaterUI();
+};
+
+window.addWater = () => {
+  const amount = parseInt(document.getElementById('water-amount').value) || 0;
+  if (amount <= 0) return;
+  
+  window.waterConsumed += amount;
+  window.updateWaterUI();
+  window.saveToFirebase();
+  window.showToast(`💧 +${amount}ml registrados!`);
+};
+
+window.undoWater = () => {
+  const amount = parseInt(document.getElementById('water-amount').value) || 0;
+  window.waterConsumed = Math.max(0, window.waterConsumed - amount); // Não deixa ficar negativo
+  window.updateWaterUI();
+  window.saveToFirebase();
+};
+
+window.updateWaterUI = () => {
+  const fillEl = document.getElementById('water-fill');
+  const textEl = document.getElementById('water-text');
+  if (!fillEl || !textEl) return;
+
+  // Atualiza o texto
+  textEl.textContent = window.waterConsumed;
+
+  // Calcula a porcentagem para encher o corpinho (trava em 100% visualmente para não vazar a água)
+  const pct = Math.min((window.waterConsumed / WATER_GOAL) * 100, 100);
+  fillEl.style.height = pct + '%';
+};
