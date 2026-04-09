@@ -3,7 +3,13 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 let currentUser = null;
-const today = new Date().toISOString().split('T')[0];
+
+// Mantém a data de hoje para facilitar
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+// Esta é a data que o usuário está visualizando na tela (pode ser o passado)
+let currentViewDate = new Date(today);
 
 // ─── PROTEÇÃO DE ROTA E BANCO DE DADOS ───
 onAuthStateChanged(auth, async (user) => {
@@ -12,15 +18,79 @@ onAuthStateChanged(auth, async (user) => {
     const badge = document.querySelector('.hero-badge');
     if (badge) badge.textContent = `NutriPlan · ${user.displayName || user.email}`;
     
-    await loadTodayData();
-    document.body.classList.add('auth-checked'); // Mostra a página!
+    updateDateDisplay();
+    await loadDataForDate(currentViewDate);
+    document.body.classList.add('auth-checked'); 
   } else {
-    window.location.href = "login.html"; // Intruso? Volta pro login!
+    window.location.href = "login.html"; 
   }
 });
 
-async function loadTodayData() {
-  const docRef = doc(db, "users", currentUser.uid, "history", today);
+// ─── SISTEMA DE CALENDÁRIO ───
+window.changeDate = async (days) => {
+  if (!currentUser) return;
+  
+  // Muda a data
+  currentViewDate.setDate(currentViewDate.getDate() + days);
+  
+  // Impede de ver o futuro (opcional, comente se quiser liberar)
+  if (currentViewDate > today) {
+    currentViewDate.setDate(currentViewDate.getDate() - days);
+    window.showToast("Você não pode prever o futuro! 🔮");
+    return;
+  }
+
+  updateDateDisplay();
+  
+  // Limpa a tela visualmente antes de carregar o novo dia
+  resetUI();
+  await loadDataForDate(currentViewDate);
+};
+
+function updateDateDisplay() {
+  const display = document.getElementById('date-display');
+  if (!display) return;
+
+  const diffTime = Math.abs(today - currentViewDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+  if (currentViewDate.getTime() === today.getTime()) {
+    display.textContent = "Hoje";
+  } else if (currentViewDate < today && diffDays === 1) {
+    display.textContent = "Ontem";
+  } else {
+    // Formata a data bonitinha (Ex: 05 de Abril)
+    const options = { day: '2-digit', month: 'long' };
+    display.textContent = currentViewDate.toLocaleDateString('pt-BR', options);
+  }
+}
+
+// Limpa todas as variáveis e desmarca os itens na tela
+function resetUI() {
+  window.eatenKcal = 0; window.eatenP = 0; window.eatenC = 0; window.eatenG = 0;
+  
+  document.querySelectorAll('.food-item').forEach(el => {
+    el.classList.remove('eaten');
+    window.updateMealProgress(el);
+  });
+  
+  window.updateTracker();
+}
+
+// ─── COMUNICAÇÃO COM O FIRESTORE ───
+
+// Formata a data para a chave do banco de dados (YYYY-MM-DD)
+function getFormattedDateString(dateObj) {
+  // Evita problemas de fuso horário
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+async function loadDataForDate(targetDate) {
+  const dateStr = getFormattedDateString(targetDate);
+  const docRef = doc(db, "users", currentUser.uid, "history", dateStr);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -39,8 +109,9 @@ async function loadTodayData() {
         }
       });
     }
-    window.updateTracker();
   }
+  // Sempre atualiza o tracker, mesmo se não existir dados (para ficar zerado)
+  window.updateTracker();
 }
 
 window.saveToFirebase = async () => {
@@ -48,7 +119,9 @@ window.saveToFirebase = async () => {
   const eatenElements = document.querySelectorAll('.food-item.eaten .food-info strong');
   const eatenFoods = Array.from(eatenElements).map(el => el.textContent);
   
-  const docRef = doc(db, "users", currentUser.uid, "history", today);
+  const dateStr = getFormattedDateString(currentViewDate);
+  const docRef = doc(db, "users", currentUser.uid, "history", dateStr);
+  
   await setDoc(docRef, {
     kcal: window.eatenKcal,
     p: window.eatenP,
@@ -66,7 +139,6 @@ if (btnLogout) {
 
 // ─── LÓGICA DA INTERFACE (MIGRADA DO HTML) ───
 
-// Dados da Lista de Compras
 const SHOP_DATA = {
   "🥩 Proteínas & Laticínios": [
     { name: "Peito de Frango", emoji: "🍗" }, { name: "Carne Moída Magra", emoji: "🥩" }, { name: "Ovos", emoji: "🥚" }, { name: "Iogurte Natural Integral", emoji: "🥛" }, { name: "Leite Desnatado", emoji: "🥛" }, { name: "Requeijão Light", emoji: "🧀" },
@@ -85,13 +157,11 @@ const SHOP_DATA = {
   ]
 };
 
-// Variáveis Globais
 window.selectedShopItems = new Set();
 window.eatenKcal = 0; window.eatenP = 0; window.eatenC = 0; window.eatenG = 0;
 const TOTAL_KCAL = 2200, TOTAL_P = 165, TOTAL_C = 275, TOTAL_G = 73;
 const MEAL_KCAL = { 1: 430, 2: 660, 3: 440, 4: 530 };
 
-// Lista de Compras
 function buildShopList() {
   const container = document.getElementById('shop-list-container');
   if(!container) return;
@@ -175,7 +245,8 @@ window.filterShopItems = () => {
 window.generateShoppingList = (format) => {
   if (window.selectedShopItems.size === 0) return window.showToast('⚠️ Selecione ao menos 1 item!');
   if (format === 'txt') {
-    const lines = ['╔════════════════════════════════╗','║    NutriPlan - Lista de Compras ║','╚════════════════════════════════╝', `  Data: ${today}  |  ${window.selectedShopItems.size} itens`, ''];
+    const dateStr = getFormattedDateString(currentViewDate);
+    const lines = ['╔════════════════════════════════╗','║    NutriPlan - Lista de Compras ║','╚════════════════════════════════╝', `  Data: ${dateStr}  |  ${window.selectedShopItems.size} itens`, ''];
     Object.entries(SHOP_DATA).forEach(([cat, items]) => {
       const sel = items.filter(i => window.selectedShopItems.has(i.name));
       if (sel.length === 0) return;
@@ -192,12 +263,10 @@ window.generateShoppingList = (format) => {
       window.openModal('📋','TXT Copiado!',`Copiado!`,[{label:'Fechar',cls:'modal-btn-primary',fn:'window.closeModal()'}]);
     });
   } else {
-    // Para funcionar o PDF, você precisa manter a importação do jspdf no index.html
     window.showToast('⚠️ O PDF exige a biblioteca jsPDF.');
   }
 };
 
-// Modal e Toast
 window.openModal = (icon, title, desc, btns) => {
   document.getElementById('modal-icon').textContent = icon; document.getElementById('modal-title').textContent = title; document.getElementById('modal-desc').textContent = desc;
   document.getElementById('modal-actions').innerHTML = btns.map(b => `<button class="modal-btn ${b.cls}" onclick="${b.fn}">${b.label}</button>`).join('');
@@ -214,7 +283,6 @@ window.showToast = (msg) => {
   t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 };
 
-// Interatividade da Dieta
 window.toggleFood = (el) => {
   const wasEaten = el.classList.contains('eaten');
   el.classList.toggle('eaten');
@@ -228,7 +296,7 @@ window.toggleFood = (el) => {
   }
   window.updateTracker();
   window.updateMealProgress(el);
-  window.saveToFirebase(); // Salva na nuvem a cada clique!
+  window.saveToFirebase(); 
 };
 
 window.updateTracker = () => {
@@ -281,13 +349,11 @@ window.copyPlan = () => {
   navigator.clipboard.writeText(`NutriPlan – 2200kcal\nP 165g | C 275g | G 73g\nTotal: 2200kcal`).then(() => window.showToast('📋 Copiado!')).catch(() => window.showToast('Erro ao copiar.'));
 };
 
-// Scroll
 window.addEventListener('scroll', () => {
   const d = document.documentElement;
   document.getElementById('progress-bar').style.width = ((d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100) + '%';
 });
 
-// Start
 document.addEventListener('DOMContentLoaded', () => {
   buildShopList();
   document.querySelectorAll('.meal-card').forEach((c, i) => c.style.animationDelay = (i * 0.08) + 's');
