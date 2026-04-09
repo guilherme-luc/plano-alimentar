@@ -252,19 +252,18 @@
 .water-modal-container { max-width: 500px; padding: 40px 30px; }
 .water-layout { display: flex; gap: 32px; align-items: stretch; }
 
-/* Lado Esquerdo - Visual e Linhas (Aumentei a altura para 320px) */
-.water-left { position: relative; flex: 0 0 110px; height: 320px; display: flex; justify-content: center; margin-left: 25px; } 
+/* Aumentei o flex basis de 110px para 140px */
+.water-left { position: relative; flex: 0 0 140px; height: 320px; display: flex; justify-content: center; margin-left: 25px; } 
 .water-markers { position: absolute; inset: 0; pointer-events: none; z-index: 0; width: 100%; left: 0; }
 .marker { position: absolute; left: 0; right: 0; border-top: 1px solid #cbd5e1; } 
 .marker span { position: absolute; left: -35px; top: -8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #64748b; background: transparent; padding: 0; } 
 
-/* Silhueta com O SEU CORPO.PNG, mais largo */
+/* Aumentei o width de 100px para 140px */
 .water-visual-large { 
   position: relative; 
-  width: 100px; /* Largura maior para não ficar achatado */
+  width: 140px; 
   height: 100%; 
   background: #e2e8f0; 
-  /* Se a cabeça não bater na linha de 100%, mude o 100% 100% abaixo para 100% 110% ou 100% 115% */
   -webkit-mask-image: url("./corpo.png");
   -webkit-mask-size: 100% 100%; 
   -webkit-mask-position: center; 
@@ -318,7 +317,9 @@
 /* Ajuste para telas pequenas */
 @media (max-width: 400px) {
   .water-layout { flex-direction: row; gap: 20px; }
-  .water-left { flex: 0 0 110px; height: 260px; margin-left: 15px; }
+  /* Aumentei a largura no celular também */
+  .water-left { flex: 0 0 130px; height: 260px; margin-left: 15px; }
+  .water-visual-large { width: 130px; }
   .water-current { font-size: 36px; }
   .water-modal-container { padding: 30px 20px; }
 }
