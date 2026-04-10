@@ -328,8 +328,8 @@ window.updateTracker = () => {
   const pct = Math.min(window.eatenKcal / TOTAL_KCAL, 1);
   const ring = document.getElementById('kcal-ring');
   if(ring) {
-    ring.style.strokeDashoffset = 188.5 - (188.5 * pct);
-    if (pct < 0.5) ring.style.stroke = '#52B788'; else if (pct < 0.85) ring.style.stroke = '#F4A261'; else if (pct <= 1) ring.style.stroke = '#52B788'; else ring.style.stroke = '#E76F51';
+    ring.style.strokeDashoffset = 213.6 - (213.6 * pct);
+    if (pct < 0.5) ring.style.stroke = '#34C759'; else if (pct < 0.85) ring.style.stroke = '#FF9500'; else if (pct <= 1) ring.style.stroke = '#34C759'; else ring.style.stroke = '#FF3B30';
   }
   document.getElementById('stat-p').textContent = window.eatenP + 'g'; document.getElementById('stat-c').textContent = window.eatenC + 'g'; document.getElementById('stat-g').textContent = window.eatenG + 'g';
   document.getElementById('bar-p').style.width = Math.min(window.eatenP / TOTAL_P * 100, 100) + '%'; document.getElementById('bar-c').style.width = Math.min(window.eatenC / TOTAL_C * 100, 100) + '%'; document.getElementById('bar-g').style.width = Math.min(window.eatenG / TOTAL_G * 100, 100) + '%';
