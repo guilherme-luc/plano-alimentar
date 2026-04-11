@@ -919,6 +919,13 @@ body {
    WATER TRACKER
    ═══════════════════════════════ */
 .water-modal-container { max-width: 520px; padding: 36px; }
+.water-page-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--sh-2);
+  border: 1px solid var(--border);
+}
 .water-layout { display: flex; gap: 32px; align-items: stretch; }
 .water-left {
   position: relative;
@@ -1128,6 +1135,7 @@ footer strong { color: var(--text-2); font-weight: 600; }
 
   /* Page sections need bottom safe area for fixed nav */
   #page-diet,
+  #page-water,
   #page-shop { padding-bottom: 80px; }
 
   /* Tracker — keep ring at 80px, don't shrink */

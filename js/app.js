@@ -542,6 +542,7 @@ window.showPage = (page, btn) => {
   const bottomBtns = document.querySelectorAll('.bottom-nav-item');
   bottomBtns.forEach(b => b.classList.remove('active'));
   if (page === 'diet' && bottomBtns[0]) bottomBtns[0].classList.add('active');
+  if (page === 'water' && bottomBtns[1]) bottomBtns[1].classList.add('active');
   if (page === 'shop' && bottomBtns[2]) bottomBtns[2].classList.add('active');
 };
 

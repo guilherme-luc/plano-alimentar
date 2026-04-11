@@ -38,46 +38,7 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="water-modal">
-  <div class="modal water-modal-container">
-    <button class="modal-close" onclick="window.closeWaterModal()">✕</button>
-    
-    <div class="water-layout">
-      <div class="water-left">
-        <div class="water-markers">
-          <div class="marker" style="top: 0%;"><span>100%</span></div>
-          <div class="marker" style="top: 25%;"><span>75%</span></div>
-          <div class="marker" style="top: 50%;"><span>50%</span></div>
-          <div class="marker" style="top: 75%;"><span>25%</span></div>
-          <div class="marker" style="top: 100%;"><span>0%</span></div>
-        </div>
-        
-        <div class="water-visual-large">
-          <div class="water-fill-large" id="water-fill">
-            <div class="water-wave-large"></div> 
-          </div>
-        </div>
-      </div>
 
-      <div class="water-right">
-        <h3 class="water-title">Hidratação</h3>
-        
-        <div class="water-display">
-          <span class="water-current" id="water-text">0</span>
-          <span class="water-total">/ 3500 ml</span>
-        </div>
-        
-        <div id="water-status" class="water-status-badge"></div>
-        
-        <div class="water-inputs">
-          <input type="number" id="water-amount" class="water-input-large" value="350" step="50" min="0">
-          <button class="water-btn-large" onclick="window.addWater()">💧 Adicionar</button>
-          <button class="water-btn-undo-large" onclick="window.undoWater()" title="Desfazer">↩️ Desfazer último</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <header class="hero">
@@ -532,6 +493,47 @@
     </div>
 
   </div>
+
+  <div class="page-section" id="page-water">
+
+    <div class="water-page-card">
+      <div class="water-layout">
+        <div class="water-left">
+          <div class="water-markers">
+            <div class="marker" style="top: 0%;"><span>100%</span></div>
+            <div class="marker" style="top: 25%;"><span>75%</span></div>
+            <div class="marker" style="top: 50%;"><span>50%</span></div>
+            <div class="marker" style="top: 75%;"><span>25%</span></div>
+            <div class="marker" style="top: 100%;"><span>0%</span></div>
+          </div>
+          <div class="water-visual-large">
+            <div class="water-fill-large" id="water-fill">
+              <div class="water-wave-large"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="water-right">
+          <h3 class="water-title">Hidratacao</h3>
+          
+          <div class="water-display">
+            <span class="water-current" id="water-text">0</span>
+            <span class="water-total">/ 3500 ml</span>
+          </div>
+          
+          <div id="water-status" class="water-status-badge"></div>
+          
+          <div class="water-inputs">
+            <input type="number" id="water-amount" class="water-input-large" value="350" step="50" min="0">
+            <button class="water-btn-large" onclick="window.addWater()">Adicionar</button>
+            <button class="water-btn-undo-large" onclick="window.undoWater()">Desfazer ultimo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
   
   <footer>
@@ -545,7 +547,7 @@
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
     <span>Dieta</span>
   </button>
-  <button class="bottom-nav-item" onclick="window.openWaterModal()">
+  <button class="bottom-nav-item" onclick="window.navTo('water', this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
     <span>Água</span>
   </button>
@@ -555,7 +557,7 @@
   </button>
 </nav>
 
-<script type="module" src="js/app.js?v=5"></script>
+<script type="module" src="js/app.js?v=6"></script>
 
 <script>
   if ('serviceWorker' in navigator) {
