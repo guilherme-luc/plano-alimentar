@@ -315,135 +315,152 @@ window.generateShoppingList = (format) => {
     try {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const margin = 20;
-      const contentW = pageW - margin * 2;
-      let y = margin;
+      const W = doc.internal.pageSize.getWidth();
+      const H = doc.internal.pageSize.getHeight();
+      const m = 18; // margin
+      const cw = W - m * 2;
+      let y = m;
 
-      // ─── HEADER BAR ───
-      doc.setFillColor(29, 29, 31); // --text
-      doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
+      // ─── FULL-WIDTH DARK HEADER ───
+      doc.setFillColor(29, 29, 31);
+      doc.rect(0, 0, W, 44, 'F');
+
+      // Green accent line
+      doc.setFillColor(48, 209, 88);
+      doc.rect(0, 44, W, 1.5, 'F');
+
+      // Title
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
+      doc.setFontSize(22);
       doc.setTextColor(255, 255, 255);
-      doc.text('NutriPlan', margin + 12, y + 12);
+      doc.text('NutriPlan', m, 18);
+
+      // Subtitle
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(174, 174, 178);
-      doc.text('Lista de Compras', margin + 12, y + 20);
+      doc.setTextColor(160, 160, 165);
+      doc.text('Lista de Compras', m, 26);
 
-      // Date badge
-      doc.setFillColor(48, 209, 88); // --accent
-      const dateText = dateStr;
-      const dateW = doc.getTextWidth(dateText) + 12;
-      doc.roundedRect(pageW - margin - dateW - 8, y + 8, dateW + 8, 12, 3, 3, 'F');
-      doc.setFontSize(9);
+      // Right side: date + count
       doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
       doc.setTextColor(255, 255, 255);
-      doc.text(dateText, pageW - margin - dateW - 4, y + 16);
+      doc.text(dateStr, W - m, 18, { align: 'right' });
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(48, 209, 88);
+      doc.text(window.selectedShopItems.size + ' itens', W - m, 26, { align: 'right' });
 
-      y += 38;
+      // Macro row in header
+      doc.setFontSize(8);
+      doc.setTextColor(130, 130, 135);
+      doc.text('2200 kcal', m, 37);
+      doc.setTextColor(10, 132, 255);
+      doc.text('P: 165g', m + 28, 37);
+      doc.setTextColor(255, 159, 10);
+      doc.text('C: 275g', m + 50, 37);
+      doc.setTextColor(255, 69, 58);
+      doc.text('G: 73g', m + 72, 37);
 
-      // ─── ITEM COUNT ───
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(29, 29, 31);
-      doc.text(`${window.selectedShopItems.size} itens selecionados`, margin, y);
-      y += 10;
+      y = 54;
 
-      // ─── CATEGORIES ───
+      // Category colors (no emojis needed)
+      const catColors = {
+        0: [10, 132, 255],   // blue - Proteinas
+        1: [255, 159, 10],   // orange - Carboidratos
+        2: [48, 209, 88],    // green - Frutas
+        3: [255, 204, 0],    // yellow - Gorduras
+        4: [175, 82, 222],   // purple - Suplementos
+      };
+
+      let catIdx = 0;
       Object.entries(SHOP_DATA).forEach(([cat, items]) => {
         const sel = items.filter(i => window.selectedShopItems.has(i.name));
-        if (sel.length === 0) return;
+        if (sel.length === 0) { catIdx++; return; }
 
-        // Check if we need a new page
-        if (y + 20 + sel.length * 10 > pageH - 30) {
+        const rowH = 7;
+        const blockH = 10 + sel.length * rowH + 4;
+
+        // New page check
+        if (y + blockH > H - 20) {
           doc.addPage();
-          y = margin;
+          y = m;
         }
 
-        // Category header
-        const catName = cat.replace(/^.\s*/, ''); // Remove emoji
-        doc.setFillColor(245, 245, 247); // --bg
-        doc.roundedRect(margin, y, contentW, 10, 2, 2, 'F');
-        doc.setFontSize(10);
+        // Category accent bar + name
+        const color = catColors[catIdx] || [110, 110, 115];
+        doc.setFillColor(...color);
+        doc.roundedRect(m, y, 2, 8, 1, 1, 'F');
+
+        const catName = cat.replace(/^[^\s]+\s*/, ''); // Remove emoji prefix
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(110, 110, 115); // --text-2
-        doc.text(catName.toUpperCase(), margin + 6, y + 7);
+        doc.setFontSize(11);
+        doc.setTextColor(29, 29, 31);
+        doc.text(catName, m + 6, y + 6);
 
-        // Count badge
-        const countStr = `${sel.length}`;
-        const countW = doc.getTextWidth(countStr) + 6;
-        doc.setFillColor(29, 29, 31);
-        doc.roundedRect(pageW - margin - countW - 4, y + 2, countW + 2, 6, 1.5, 1.5, 'F');
-        doc.setFontSize(7);
-        doc.setTextColor(255, 255, 255);
-        doc.text(countStr, pageW - margin - countW - 1, y + 6.5);
+        // Count
+        doc.setFontSize(9);
+        doc.setTextColor(160, 160, 165);
+        doc.text(sel.length + ' itens', W - m, y + 6, { align: 'right' });
 
-        y += 14;
+        y += 12;
 
-        // Items
-        sel.forEach(item => {
-          if (y > pageH - 25) {
+        // Light separator
+        doc.setDrawColor(235, 235, 240);
+        doc.setLineWidth(0.3);
+        doc.line(m, y, W - m, y);
+        y += 3;
+
+        // Items in compact rows
+        sel.forEach((item, idx) => {
+          if (y > H - 18) {
             doc.addPage();
-            y = margin;
+            y = m;
           }
 
-          // Checkbox
-          doc.setDrawColor(209, 209, 214); // --border-h
-          doc.setLineWidth(0.4);
-          doc.roundedRect(margin + 4, y - 2.5, 5, 5, 1, 1, 'S');
+          // Alternating row background
+          if (idx % 2 === 0) {
+            doc.setFillColor(248, 248, 250);
+            doc.rect(m, y - 2, cw, rowH, 'F');
+          }
+
+          // Circle checkbox
+          doc.setDrawColor(200, 200, 205);
+          doc.setLineWidth(0.35);
+          doc.circle(m + 4, y + 1.5, 2, 'S');
 
           // Item name
-          doc.setFontSize(11);
           doc.setFont('helvetica', 'normal');
-          doc.setTextColor(29, 29, 31);
-          doc.text(item.name, margin + 14, y + 1.5);
+          doc.setFontSize(10);
+          doc.setTextColor(50, 50, 55);
+          doc.text(item.name, m + 10, y + 2.5);
 
-          // Dashed line
-          doc.setDrawColor(229, 229, 234); // --border
-          doc.setLineDashPattern([1, 1], 0);
-          const textEnd = margin + 14 + doc.getTextWidth(item.name) + 4;
-          if (textEnd < pageW - margin) {
-            doc.line(textEnd, y + 1.5, pageW - margin, y + 1.5);
-          }
-          doc.setLineDashPattern([], 0);
-
-          y += 8;
+          y += rowH;
         });
 
-        y += 4;
+        y += 6;
+        catIdx++;
       });
 
       // ─── FOOTER ───
-      if (y + 20 > pageH - 15) {
-        doc.addPage();
-        y = margin;
-      }
-      y = Math.max(y, pageH - 35);
-      doc.setDrawColor(229, 229, 234);
-      doc.setLineWidth(0.3);
-      doc.line(margin, y, pageW - margin, y);
-      y += 8;
+      const footerY = H - 12;
+      doc.setDrawColor(220, 220, 225);
+      doc.setLineWidth(0.2);
+      doc.line(m, footerY - 4, W - m, footerY - 4);
 
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(110, 110, 115);
-      doc.text('Plano: 2200 kcal  |  P: 165g  |  C: 275g  |  G: 73g', margin, y);
-      y += 5;
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(174, 174, 178);
-      doc.text('Gerado pelo NutriPlan — Este plano e informativo. Consulte sempre um nutricionista.', margin, y);
+      doc.setFontSize(7);
+      doc.setTextColor(160, 160, 165);
+      doc.text('NutriPlan - Este plano e informativo. Consulte sempre um nutricionista.', m, footerY);
+      doc.text(dateStr, W - m, footerY, { align: 'right' });
 
       // Save
-      doc.save(`NutriPlan_Lista_${dateStr}.pdf`);
+      doc.save('NutriPlan_Lista_' + dateStr + '.pdf');
       
-      window.openModal('📄', 'PDF Gerado!', `Sua lista com ${window.selectedShopItems.size} itens foi baixada como PDF.`, [{ label: '✓ Fechar', cls: 'modal-btn-primary', fn: 'window.closeModal()' }]);
+      window.openModal('\u{1F4C4}', 'PDF Gerado!', 'Sua lista com ' + window.selectedShopItems.size + ' itens foi baixada.', [{ label: 'Fechar', cls: 'modal-btn-primary', fn: 'window.closeModal()' }]);
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      window.showToast('⚠️ Erro ao gerar PDF. Tente novamente.');
+      window.showToast('\u26A0\uFE0F Erro ao gerar PDF. Tente novamente.');
     }
   }
 };
