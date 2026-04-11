@@ -1046,22 +1046,74 @@ footer {
 footer strong { color: var(--text-2); font-weight: 600; }
 
 /* ═══════════════════════════════
+   BOTTOM NAVIGATION
+   ═══════════════════════════════ */
+.bottom-nav {
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9990;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 6px 0;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,.06);
+}
+[data-theme="dark"] .bottom-nav {
+  background: #1C1C1E;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.3);
+}
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  cursor: pointer;
+  color: var(--text-3);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  transition: color .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.bottom-nav-item svg {
+  transition: all .15s ease;
+}
+.bottom-nav-item.active {
+  color: var(--accent);
+}
+.bottom-nav-item.active svg {
+  stroke: var(--accent);
+  transform: scale(1.08);
+}
+.bottom-nav-item:not(.active):active {
+  color: var(--text-2);
+}
+
+/* ═══════════════════════════════
    RESPONSIVE
    ═══════════════════════════════ */
 @media (max-width: 768px) {
   .hero { padding: 56px 20px 76px; }
   .hero h1 { font-size: 32px; }
 
-  .container { padding: 0 20px 60px; }
+  .container { padding: 0 20px 100px; } /* Extra bottom for nav */
+
+  /* Hide desktop tabs, show bottom nav */
+  .nav-tabs { display: none; }
+  .bottom-nav { display: flex; }
 
   .tracker-bar { padding: 20px; border-radius: 20px; gap: 20px; }
   .tracker-ring { width: 72px; height: 72px; }
   .tracker-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .tracker-stat { padding: 10px 8px; border-radius: 12px; }
   .tracker-stat .t-val { font-size: 16px; }
-
-  .nav-tabs { border-radius: 14px; padding: 4px; }
-  .nav-tab { padding: 12px 14px; font-size: 14px; border-radius: 10px; }
 
   .filter-tabs { gap: 8px; }
   .filter-btn { padding: 10px 14px; border-radius: 10px; }
@@ -1096,4 +1148,6 @@ footer strong { color: var(--text-2); font-weight: 600; }
   .summary-card h3 { font-size: 17px; margin-bottom: 16px; }
   .sum-item { padding: 14px 12px; border-radius: 14px; }
   .sum-item .val { font-size: 24px; }
+
+  footer { padding-bottom: 80px; }
 }

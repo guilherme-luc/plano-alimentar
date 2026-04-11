@@ -534,8 +534,31 @@ window.filterMeal = (id, btn) => {
 };
 
 window.showPage = (page, btn) => {
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Sync bottom nav
+  const bottomBtns = document.querySelectorAll('.bottom-nav-item');
+  bottomBtns.forEach(b => b.classList.remove('active'));
+  if (page === 'diet' && bottomBtns[0]) bottomBtns[0].classList.add('active');
+  if (page === 'shop' && bottomBtns[2]) bottomBtns[2].classList.add('active');
+};
+
+window.navTo = (page, btn) => {
+  // Sync desktop nav tabs
+  const tabs = document.querySelectorAll('.nav-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (page === 'diet' && tabs[0]) tabs[0].classList.add('active');
+  if (page === 'shop' && tabs[1]) tabs[1].classList.add('active');
+  // Sync bottom nav
+  document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Switch page
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.imgFallback = (img, emoji) => {
