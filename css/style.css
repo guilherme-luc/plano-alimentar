@@ -820,16 +820,18 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9998;
-  background: rgba(0,0,0,.4);
+  z-index: 9999;
+  background: rgba(0,0,0,.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 20px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease;
-  backdrop-filter: blur(8px);
+  transition: opacity .25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow-y: auto;
 }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
@@ -1118,11 +1120,15 @@ footer strong { color: var(--text-2); font-weight: 600; }
   .hero { padding: 56px 20px 76px; }
   .hero h1 { font-size: 32px; }
 
-  .container { padding: 0 20px 130px; }
+  .container { padding: 0 20px 40px; }
 
   /* Hide desktop tabs, show bottom nav */
   .nav-tabs { display: none; }
   .bottom-nav { display: flex; }
+
+  /* Page sections need bottom safe area for fixed nav */
+  #page-diet,
+  #page-shop { padding-bottom: 80px; }
 
   /* Tracker — keep ring at 80px, don't shrink */
   .tracker-bar { padding: 20px; border-radius: 20px; gap: 16px; }
