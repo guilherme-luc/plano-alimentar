@@ -291,8 +291,10 @@ window.filterShopItems = () => {
 
 window.generateShoppingList = (format) => {
   if (window.selectedShopItems.size === 0) return window.showToast('⚠️ Selecione ao menos 1 item!');
+  
+  const dateStr = getFormattedDateString(currentViewDate);
+  
   if (format === 'txt') {
-    const dateStr = getFormattedDateString(currentViewDate);
     const lines = ['╔════════════════════════════════╗','║    NutriPlan - Lista de Compras ║','╚════════════════════════════════╝', `  Data: ${dateStr}  |  ${window.selectedShopItems.size} itens`, ''];
     Object.entries(SHOP_DATA).forEach(([cat, items]) => {
       const sel = items.filter(i => window.selectedShopItems.has(i.name));
@@ -307,10 +309,142 @@ window.generateShoppingList = (format) => {
       window.openModal('📋', 'TXT Copiado!', `${window.selectedShopItems.size} itens copiados! Cole onde quiser.`, [{ label: '✓ Fechar', cls: 'modal-btn-primary', fn: 'window.closeModal()' }]);
     }).catch(() => {
       const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
-      window.openModal('📋','TXT Copiado!',`Copiado!`,[{label:'Fechar',cls:'modal-btn-primary',fn:'window.closeModal()'}]);
+      window.openModal('📋','TXT Copiado!','Copiado!',[{label:'Fechar',cls:'modal-btn-primary',fn:'window.closeModal()'}]);
     });
-  } else {
-    window.showToast('⚠️ O PDF exige a biblioteca jsPDF.');
+  } else if (format === 'pdf') {
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const contentW = pageW - margin * 2;
+      let y = margin;
+
+      // ─── HEADER BAR ───
+      doc.setFillColor(29, 29, 31); // --text
+      doc.roundedRect(margin, y, contentW, 28, 4, 4, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(255, 255, 255);
+      doc.text('NutriPlan', margin + 12, y + 12);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(174, 174, 178);
+      doc.text('Lista de Compras', margin + 12, y + 20);
+
+      // Date badge
+      doc.setFillColor(48, 209, 88); // --accent
+      const dateText = dateStr;
+      const dateW = doc.getTextWidth(dateText) + 12;
+      doc.roundedRect(pageW - margin - dateW - 8, y + 8, dateW + 8, 12, 3, 3, 'F');
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(255, 255, 255);
+      doc.text(dateText, pageW - margin - dateW - 4, y + 16);
+
+      y += 38;
+
+      // ─── ITEM COUNT ───
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(29, 29, 31);
+      doc.text(`${window.selectedShopItems.size} itens selecionados`, margin, y);
+      y += 10;
+
+      // ─── CATEGORIES ───
+      Object.entries(SHOP_DATA).forEach(([cat, items]) => {
+        const sel = items.filter(i => window.selectedShopItems.has(i.name));
+        if (sel.length === 0) return;
+
+        // Check if we need a new page
+        if (y + 20 + sel.length * 10 > pageH - 30) {
+          doc.addPage();
+          y = margin;
+        }
+
+        // Category header
+        const catName = cat.replace(/^.\s*/, ''); // Remove emoji
+        doc.setFillColor(245, 245, 247); // --bg
+        doc.roundedRect(margin, y, contentW, 10, 2, 2, 'F');
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(110, 110, 115); // --text-2
+        doc.text(catName.toUpperCase(), margin + 6, y + 7);
+
+        // Count badge
+        const countStr = `${sel.length}`;
+        const countW = doc.getTextWidth(countStr) + 6;
+        doc.setFillColor(29, 29, 31);
+        doc.roundedRect(pageW - margin - countW - 4, y + 2, countW + 2, 6, 1.5, 1.5, 'F');
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.text(countStr, pageW - margin - countW - 1, y + 6.5);
+
+        y += 14;
+
+        // Items
+        sel.forEach(item => {
+          if (y > pageH - 25) {
+            doc.addPage();
+            y = margin;
+          }
+
+          // Checkbox
+          doc.setDrawColor(209, 209, 214); // --border-h
+          doc.setLineWidth(0.4);
+          doc.roundedRect(margin + 4, y - 2.5, 5, 5, 1, 1, 'S');
+
+          // Item name
+          doc.setFontSize(11);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(29, 29, 31);
+          doc.text(item.name, margin + 14, y + 1.5);
+
+          // Dashed line
+          doc.setDrawColor(229, 229, 234); // --border
+          doc.setLineDashPattern([1, 1], 0);
+          const textEnd = margin + 14 + doc.getTextWidth(item.name) + 4;
+          if (textEnd < pageW - margin) {
+            doc.line(textEnd, y + 1.5, pageW - margin, y + 1.5);
+          }
+          doc.setLineDashPattern([], 0);
+
+          y += 8;
+        });
+
+        y += 4;
+      });
+
+      // ─── FOOTER ───
+      if (y + 20 > pageH - 15) {
+        doc.addPage();
+        y = margin;
+      }
+      y = Math.max(y, pageH - 35);
+      doc.setDrawColor(229, 229, 234);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y, pageW - margin, y);
+      y += 8;
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(110, 110, 115);
+      doc.text('Plano: 2200 kcal  |  P: 165g  |  C: 275g  |  G: 73g', margin, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(174, 174, 178);
+      doc.text('Gerado pelo NutriPlan — Este plano e informativo. Consulte sempre um nutricionista.', margin, y);
+
+      // Save
+      doc.save(`NutriPlan_Lista_${dateStr}.pdf`);
+      
+      window.openModal('📄', 'PDF Gerado!', `Sua lista com ${window.selectedShopItems.size} itens foi baixada como PDF.`, [{ label: '✓ Fechar', cls: 'modal-btn-primary', fn: 'window.closeModal()' }]);
+    } catch (err) {
+      console.error('Erro ao gerar PDF:', err);
+      window.showToast('⚠️ Erro ao gerar PDF. Tente novamente.');
+    }
   }
 };
 
