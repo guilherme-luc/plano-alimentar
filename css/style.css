@@ -329,11 +329,23 @@ body {
 }
 .tracker-kcal { display: flex; flex-direction: column; align-items: center; }
 .tracker-ring { position: relative; width: 80px; height: 80px; }
-.tracker-ring svg { transform: rotate(-90deg); }
+.tracker-ring svg { transform: rotate(-90deg); display: block; }
 .tracker-ring .ring-bg { fill: none; stroke: var(--bg); stroke-width: 5; }
 .tracker-ring .ring-fill { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 213.6; stroke-dashoffset: 213.6; transition: stroke-dashoffset .8s ease; }
-.tracker-ring .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.1; }
-.tracker-ring .ring-text small { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; margin-top: 1px; }
+.tracker-ring .ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  text-align: center;
+}
+.tracker-ring .ring-text small { font-size: 9px; font-weight: 600; color: var(--text-3); letter-spacing: .06em; margin-top: 2px; }
 .tracker-stats { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .tracker-stat { background: var(--bg); border-radius: 14px; padding: 14px 16px; text-align: center; transition: all .2s; }
 .tracker-stat:hover { background: #EDEDF0; }
@@ -387,6 +399,9 @@ body {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  position: relative;
+  mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 90%, transparent 100%);
 }
 .filter-tabs::-webkit-scrollbar { display: none; }
 .filter-btn {
@@ -876,7 +891,7 @@ body {
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
-  z-index: 9999;
+  z-index: 10000;
   transition: all .25s ease;
   opacity: 0;
   pointer-events: none;
@@ -926,12 +941,12 @@ body {
   height: 100%;
   background: var(--bg);
   -webkit-mask-image: url("../corpo.png");
-  -webkit-mask-size: 100% 100%;
-  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center bottom;
   -webkit-mask-repeat: no-repeat;
   mask-image: url("../corpo.png");
-  mask-size: 100% 100%;
-  mask-position: center;
+  mask-size: contain;
+  mask-position: center bottom;
   mask-repeat: no-repeat;
   z-index: 1;
 }
@@ -1103,51 +1118,70 @@ footer strong { color: var(--text-2); font-weight: 600; }
   .hero { padding: 56px 20px 76px; }
   .hero h1 { font-size: 32px; }
 
-  .container { padding: 0 20px 100px; } /* Extra bottom for nav */
+  .container { padding: 0 20px 130px; }
 
   /* Hide desktop tabs, show bottom nav */
   .nav-tabs { display: none; }
   .bottom-nav { display: flex; }
 
-  .tracker-bar { padding: 20px; border-radius: 20px; gap: 20px; }
-  .tracker-ring { width: 72px; height: 72px; }
+  /* Tracker — keep ring at 80px, don't shrink */
+  .tracker-bar { padding: 20px; border-radius: 20px; gap: 16px; }
   .tracker-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .tracker-stat { padding: 10px 8px; border-radius: 12px; }
   .tracker-stat .t-val { font-size: 16px; }
+  .tracker-ring .ring-text { font-size: 16px; }
 
+  /* Filter tabs */
   .filter-tabs { gap: 8px; }
   .filter-btn { padding: 10px 14px; border-radius: 10px; }
 
+  /* Meal cards */
   .meal-card { border-radius: 20px; margin-bottom: 20px; }
-  .meal-top { padding: 18px 20px 14px; }
+  .meal-top { padding: 18px 16px 14px; gap: 12px; }
   .meal-icon { width: 44px; height: 44px; border-radius: 12px; font-size: 20px; }
-  .meal-meta h2 { font-size: 17px; }
-  .meal-kcal { font-size: 20px; padding: 6px 14px; }
-  .macro-chips { padding: 12px 20px 10px; }
-  .option-toggle { padding: 4px 20px 16px; }
-  .food-panel { padding: 0 20px 20px; }
-  .food-item { gap: 12px; padding: 10px 12px; border-radius: 12px; }
+  .meal-meta h2 { font-size: 16px; }
+  .meal-kcal { font-size: 18px; padding: 6px 12px; border-radius: 10px; }
+  .macro-chips { padding: 10px 16px 8px; gap: 6px; }
+  .chip { font-size: 11px; padding: 4px 8px; }
+  .option-toggle { padding: 4px 16px 14px; gap: 8px; }
+  .opt-btn { padding: 9px 10px; font-size: 13px; border-radius: 10px; }
+  .food-panel { padding: 0 16px 16px; }
+  .food-item { gap: 10px; padding: 10px; border-radius: 12px; }
   .food-img,
-  .food-img-placeholder { width: 46px; height: 46px; border-radius: 10px; }
-  .food-img-placeholder { font-size: 20px; }
+  .food-img-placeholder { width: 44px; height: 44px; border-radius: 10px; }
+  .food-img-placeholder { font-size: 18px; }
+  .food-info strong { font-size: 14px; }
+  .food-info span { font-size: 12px; }
+  .food-kcal { font-size: 12px; padding: 3px 8px; }
 
+  /* Shopping list */
   .shop-header { padding: 20px; border-radius: 20px; }
   .shop-category { border-radius: 16px; }
-
-  .water-layout { flex-direction: column; gap: 24px; align-items: center; }
-  .water-left { height: 240px; margin-left: 14px; flex: 0 0 auto; }
-  .water-right { text-align: center; width: 100%; }
-  .water-status-badge { align-self: center; }
-  .modal { padding: 28px 22px; border-radius: 20px; }
-
+  .generate-panel { margin-bottom: 20px; }
   .generate-card { flex-direction: column; text-align: center; padding: 18px; border-radius: 18px; }
   .generate-btns { justify-content: center; width: 100%; }
   .gen-btn { width: 100%; justify-content: center; }
 
+  /* Water modal — vertical layout */
+  .water-modal-container { max-width: 100%; padding: 28px 20px; }
+  .water-layout { flex-direction: column; gap: 20px; align-items: center; }
+  .water-left { height: 200px; width: 120px; flex: 0 0 auto; margin-left: 30px; }
+  .water-visual-large { width: 120px; }
+  .water-right { text-align: center; width: 100%; }
+  .water-title { font-size: 18px; margin-bottom: 8px; }
+  .water-current { font-size: 36px; }
+  .water-status-badge { align-self: center; margin-bottom: 16px; }
+  .modal { padding: 28px 22px; border-radius: 20px; }
+
+  /* Summary & actions */
   .summary-card { padding: 24px 20px; border-radius: 20px; }
   .summary-card h3 { font-size: 17px; margin-bottom: 16px; }
   .sum-item { padding: 14px 12px; border-radius: 14px; }
   .sum-item .val { font-size: 24px; }
 
-  footer { padding-bottom: 80px; }
+  /* Toast above bottom nav */
+  .toast { bottom: 80px; }
+
+  /* Footer clear nav */
+  footer { padding-bottom: 20px; }
 }
