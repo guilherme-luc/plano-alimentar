@@ -2,6 +2,30 @@ import { auth, db } from './firebase.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+// ─── DARK MODE ───
+window.toggleTheme = () => {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    html.removeAttribute('data-theme');
+    localStorage.setItem('nutriplan-theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    localStorage.setItem('nutriplan-theme', 'dark');
+  }
+  updateThemeIcon();
+};
+
+function updateThemeIcon() {
+  const btn = document.getElementById('btnTheme');
+  if (!btn) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = isDark ? '☀️' : '🌙';
+}
+
+// Set correct icon on load
+document.addEventListener('DOMContentLoaded', updateThemeIcon);
+
 let currentUser = null;
 
 // Mantém a data de hoje para facilitar

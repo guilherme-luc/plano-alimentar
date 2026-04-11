@@ -18,6 +18,14 @@
 
 <body class="protected-page">
 
+<script>
+  // Load theme immediately to prevent flash
+  (function() {
+    const saved = localStorage.getItem('nutriplan-theme');
+    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
 <div id="progress-bar"></div>
 <div class="toast" id="toast"><span id="toast-text"></span></div>
 <div class="modal-overlay" id="modal-overlay">
@@ -73,6 +81,7 @@
 
 
 <header class="hero">
+  <button id="btnTheme" onclick="window.toggleTheme()" title="Alternar tema">🌙</button>
   <button id="btnLogout">Sair</button>
   <div class="hero-circles"><span></span><span></span><span></span></div>
   <div class="hero-badge">NutriPlan</div>

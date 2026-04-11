@@ -14,6 +14,13 @@
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
 
+<script>
+  (function() {
+    const saved = localStorage.getItem('nutriplan-theme');
+    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
   <div class="tracker-bar" style="flex-direction: column; width: 100%; max-width: 380px; text-align: center; gap: 32px; padding: 48px 32px;">
     
     <div>

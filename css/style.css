@@ -37,6 +37,53 @@
   --radius-lg: 24px;
 }
 
+/* ═══════════════════════════════
+   DARK MODE
+   ═══════════════════════════════ */
+[data-theme="dark"] {
+  --bg:       #000000;
+  --surface:  #1C1C1E;
+  --border:   #38383A;
+  --border-h: #48484A;
+  --text:     #F5F5F7;
+  --text-2:   #A1A1A6;
+  --text-3:   #636366;
+
+  --accent:   #30D158;
+  --accent-h: #28C04E;
+  --accent-bg:#0D3B1E;
+
+  --blue:     #0A84FF;
+  --orange:   #FF9F0A;
+  --red:      #FF453A;
+  --blue-bg:  #0A1A2F;
+  --orange-bg:#2A1A00;
+  --red-bg:   #2A0A08;
+
+  --sh-1: 0 1px 3px rgba(0,0,0,.3);
+  --sh-2: 0 4px 12px rgba(0,0,0,.4);
+  --sh-3: 0 8px 30px rgba(0,0,0,.5);
+}
+
+[data-theme="dark"] .hero { background: #000; }
+[data-theme="dark"] .hero::after { background: var(--bg); }
+[data-theme="dark"] .food-item { background: var(--surface); }
+[data-theme="dark"] .food-item:hover { background: #2C2C2E; }
+[data-theme="dark"] .food-item.eaten { background: var(--accent-bg); }
+[data-theme="dark"] .food-img { background: #2C2C2E; }
+[data-theme="dark"] .food-img-placeholder { background: #2C2C2E; }
+[data-theme="dark"] .tracker-stat:hover { background: #2C2C2E; }
+[data-theme="dark"] .shop-item { background: var(--surface); }
+[data-theme="dark"] .shop-item:hover { background: #2C2C2E; }
+[data-theme="dark"] .shop-cat-header:hover { background: #2C2C2E; }
+[data-theme="dark"] .opt-btn:hover:not(.active) { background: #2C2C2E; }
+[data-theme="dark"] .filter-btn:hover:not(.active) { border-color: var(--border-h); }
+[data-theme="dark"] .summary-card { background: #1C1C1E; border: 1px solid var(--border); }
+[data-theme="dark"] .modal { background: #1C1C1E; }
+[data-theme="dark"] .toast { background: #2C2C2E; }
+[data-theme="dark"] .btn-outline { background: var(--surface); }
+[data-theme="dark"] .generate-card { background: #1C1C1E; border-color: var(--border); }
+
 /* ─── BASE ─── */
 html { scroll-behavior: smooth; }
 body {
@@ -48,6 +95,7 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 15px;
   line-height: 1.5;
+  transition: background-color .3s ease, color .3s ease;
 }
 
 /* Auth transition */
@@ -145,6 +193,31 @@ body {
 #btnLogout:hover {
   background: rgba(255,255,255,.2);
   color: #fff;
+}
+
+/* ─── THEME TOGGLE ─── */
+#btnTheme {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.85);
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all .2s ease;
+  line-height: 1;
+}
+#btnTheme:hover {
+  background: rgba(255,255,255,.2);
+  transform: scale(1.1);
 }
 
 /* ─── DATE PICKER ─── */
